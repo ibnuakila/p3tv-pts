@@ -238,7 +238,7 @@
                                             }elseif($obj->id_jns_evaluasi == '3'){?>
                                                 <a href="<?= base_url() . 'backoffice/kelolaregistrasi/detail/' . $reg->getIdRegistrasi() ?>" title="Detail Usulan">
                                                     <i class="fa fa-eye"></i> </a>
-                                                <a href="<?= base_url() . 'backoffice/kelolapaket/getform/' . $reg->getKdpti() ?>" title="Lampiran BAP">
+                                                <a href="<?= base_url() . 'backoffice/kelolapaket/getform/' . $reg->getIdRegistrasi() ?>" title="Lampiran BAP">
                                                         <i class="fa fa-list-alt"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolaproses/getbapmonev/' . $reg->getIdRegistrasi() ?>" title="Template BAP">
                                                         <i class="fa fa-list"></i> </a>
