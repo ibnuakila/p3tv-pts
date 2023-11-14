@@ -16,7 +16,7 @@
                     $nmyayasan = $penyelenggara->getNamaPenyelenggara();
                 }
                 $status = $registrasi->getStatusRegistrasi();
-                $proses = new Proses($id_proses);
+                
                 ?>                
 
 
@@ -30,30 +30,16 @@
                 <h3><?= $nmyayasan ?></h3>
                 <h4><?= $pt->getNmPti() ?></h4>
                 <hr>
-
-                <?php
-                if ($proses->getIdJnsEvaluasi() == '1') {
-                    $rekap = new Rekapitulasi();
-                    $rekap->getBy('id_registrasi', $registrasi->getIdRegistrasi());
-                    if($rekap->getKeterangan()!=''){?>
-                        <div class="form-group">
-                                <a class="btn btn-success" href="<?= base_url() . 'backoffice/kelolarekapitulasi/downloadComment/' . $registrasi->getIdRegistrasi() ?>">File Komentar Telah Ada</a>
-                        </div>
-                            <?php
-                    }?>
+                
                     <div class="form-group">
-                        <label class="col-lg-3 control-label">File Komentar Konsolidasi</label>
+                        <label class="col-lg-3 control-label">File BAP Monev</label>
                         <div class="">
-                            <input type="file" class="btn btn-file" name="userfile" id="userfile"/> 
-                            <input type="hidden" name="idregistrasi" value="<?= $registrasi->getIdRegistrasi() ?>">
-                            <input type="hidden" name="jns_evaluasi" value="<?= $proses->getIdJnsEvaluasi() ?>">
-                            <input type="hidden" name="type_evaluator" value="<?= $proses->getTypeEvaluator() ?>">
+                            <input type="file" class="btn btn-file" name="userfile" id="userfile"/>     
+                            <input type="hidden" name="id_registrasi" value="<?= $registrasi->getIdRegistrasi() ?>">
+                            <input type="hidden" name="id_proses" value="<?= $id_proses ?>">
                         </div>
-                    </div>
-                    <?php
-                    
-                                   
-                } ?>
+                    </div>                         
+                
                 <div class="form-group">
                     <div class="col-lg-10 col-lg-offset-2">
                         <button class="btn btn-warning btn-sm" name="cancel" value="cancel">Cancel</button>

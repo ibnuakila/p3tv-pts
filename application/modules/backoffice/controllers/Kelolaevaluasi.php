@@ -1903,6 +1903,60 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             redirect(base_url() . 'backoffice/kelolaevaluasi/indexevaluator/');
         }
     }
+    public function addBapMonev() {
+        $view = 'form_upload_bap';
+        $id_reg = $this->uri->segment(4, 0);
+        $id_proses = $this->uri->segment(5, 0);
+        //$registrasi = new Registrasi($id_reg);
+        //$proses = new Proses($id_proses);
+        $registrasi = new Registrasi($id_reg);
+        $data['registrasi'] = $registrasi;
+        $data['flagInsert'] = 'true';
+        $data['id_proses'] = $id_proses;
+        showNewBackEnd($view, $data, 'index-1');
+    }
+    
+    public function uploadBapMonev(){
+        $id_registrasi = $this->input->post('id_registrasi');
+        $id_proses = $this->input->post('id_proses');
+        $thn = date("Y");
+        $bln = date("M");
+
+        $file_path_excel = '/home/pppts/frontends/frontend/web/dokumen/hasil_evaluasi/' . $thn . '/' . $bln . '/';
+
+        if (!is_dir($file_path_excel)) {
+            mkdir($file_path_excel, 0777, true);
+        }
+        $config ['upload_path'] = $file_path_excel;
+        $config ['allowed_types'] = 'doc|docx|pdf';
+        $config ['max_size'] = '2000';
+
+        $this->load->library('upload', $config);
+        if (!$this->upload->do_upload()) { // upload excell penilaian
+            $error = trim(strip_tags($this->upload->display_errors()));
+            echo '<script>';
+            echo 'alert("Error. ' . $error . '");';
+            echo 'window.history.back(1);';
+            echo '</script>';
+        } else {
+            echo 'file excel uploaded..</br>';
+            $data = $this->upload->data();
+
+            $rekap = new Rekapitulasi();
+            $rekap->getBy('id_registrasi', $id_registrasi);
+            $rekap->setFileBeritaAcara($data['full_path']);
+            $rekap->update();
+            $proses = new Proses($id_proses);
+            $proses->setIdStatusProses(3);
+            $proses->update();
+            
+            $registrasi = new Registrasi($id_registrasi);
+            $registrasi->setIdStatusRegistrasi(9);
+            $registrasi->update();
+            
+            redirect(base_url() . 'backoffice/kelolaevaluasi/indexevaluator/');
+        }
+    }
 
 }
 

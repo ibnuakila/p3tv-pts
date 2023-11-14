@@ -242,6 +242,8 @@
                                                         <i class="fa fa-list-alt"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolaproses/getbapmonev/' . $reg->getIdRegistrasi() ?>" title="Template BAP">
                                                         <i class="fa fa-list"></i> </a>
+                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/addbapmonev/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Upload BAP">
+                                                        <i class="fa fa-upload"></i> </a>
                                         <?php
                                             }
                                         }
