@@ -534,11 +534,11 @@ class KelolaPaket extends MX_Controller implements IControll {
     public function getForm() {
         //error_reporting(E_ALL);
 
-        $kdpti = $this->uri->segment(4); //$this->input->post('kdpti');
+        $id_reg = $this->uri->segment(4); //$this->input->post('kdpti');
 
         $kirim = new Kirim();
 
-        $result = $kirim->getByRelated('tbl_kirim', 'kdpti', $kdpti, '0', '0');
+        $result = $kirim->getByRelated('tbl_kirim', 'id_registrasi', $id_reg, '0', '0');
 
         if ($result->num_rows() > 0) {
             $row = $result->row();
@@ -580,6 +580,8 @@ class KelolaPaket extends MX_Controller implements IControll {
             $objPHPExcel->getActiveSheet()->setCellValue('H11', 'Tidak');
             $r = 12;
             $no = 0;
+            $mperiode = new Periode();
+            $current_periode = $mperiode->getOpenPeriode();
             foreach ($result->result() as $row) {
 
 
@@ -589,9 +591,10 @@ class KelolaPaket extends MX_Controller implements IControll {
                 foreach ($result_detail->result() as $obj) {
                     $detail_hibah = new DetailPaketHibah();
                     $detail_hibah->getBy('id', trim($obj->id_detail_paket_hibah));
-                    $barang = new Barang(trim($detail_hibah->getIdItem()));
+                    $params = ['id_item' => trim($detail_hibah->getIdItem()), 'periode' => $current_periode[0]];
+                    $barang = new ItemBarang($params);
                     $objPHPExcel->getActiveSheet()->setCellValue('A' . $r, ++$no);
-                    $objPHPExcel->getActiveSheet()->setCellValue('B' . $r, $barang->getNmBarang());
+                    $objPHPExcel->getActiveSheet()->setCellValue('B' . $r, $barang->getBarang());
                     $objPHPExcel->getActiveSheet()->setCellValue('C' . $r, $detail_hibah->getMerk() . ' | ' . $detail_hibah->getType());
                     $objPHPExcel->getActiveSheet()->getStyle('C' . $r)->getAlignment()->setWrapText(true);
                     $objPHPExcel->getActiveSheet()->setCellValue('D' . $r, $obj->jumlah);
