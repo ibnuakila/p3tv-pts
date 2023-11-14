@@ -1,0 +1,108 @@
+  <div class="myhead">
+      <div class="container">
+          <div class="row">
+                <div class="col-md-2">                    
+                        <img src="<?=base_url()?>assets/images/kemenristekdikti.png"  class="img img-thumbnail logo">                    
+                </div>
+                <div class="col-md-7">                      
+                    <div class="row">                        
+                    <h2 class="text-shadow">PPPTS</h2>
+                    <h4 class="text-shadow">Direktorat Pembinaan Kelembagaan Perguruan Tinggi</h4>                    
+                    <p class="text-shadow"><em>Kementerian Riset, Teknologi, dan Pendidikan Tinggi</em> </p>
+                    <!--<footer>Temukan referensi paper yang Anda butuhkan disini.</footer>-->                                           
+                    </div>
+                    
+                </div>
+              
+          </div>
+          
+      </div>
+    </div>
+
+<nav class="navbar navbar-fixed-top navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">PPPTS</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="<?= base_url() ?>index.php/frontpage">Beranda</a></li>            
+          </ul>
+          <ul class="nav navbar-nav">
+                        <?php
+                        $userid = strtoupper($this->session->userdata('userid'));
+                        $user = new ModUsers($userid);
+
+                        $objsystem = new ModSystemInformation('');
+                        $systems = $objsystem->getObjectListUser($userid);
+                        $objmodule = new ModSystemModule('');
+                        $objsubmodule = new ModSubSystemModule('', '');
+                        $accesed_module = ucfirst($this->uri->segment(1));
+                        foreach ($systems as $system) {
+                            ?>
+                        <li class="dropdown <?php if($system->getSystemName()==$accesed_module){                            echo 'active';} ?>">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <?= $system->getSystemLabel() ?>
+                                    <b class="caret"></b>
+                                </a>
+                                <ul class="dropdown-menu" role="menu"> 
+                                    <?php
+                                    $objmodule->m_ModSystemInformation = $system;
+                                    $modules = $objmodule->getObjectList('', '');
+                                                                     
+                                    
+                                     
+                                            foreach ($modules as $module) {
+                                            //print_r($module);
+                                            $objsubmodule->m_ModSystemModule = $module;
+                                            $objsubmodule->setUserId($user->getUserId());
+                                            $submodules = $objsubmodule->getObjectList('', '');
+                                                if (count($submodules) > 0) {
+                                                    foreach ($submodules as $submodule) {
+
+                                                        if ($submodule->getIsMenu() == 't') {
+                                                            ?>            
+
+                                                            <li role="presentation"><a href="<?=
+                                                                base_url() . strtolower($system->getSystemName() . '/' .
+                                                                        $module->getModuleName() . '/' .
+                                                                        $submodule->getSubModuleName())
+                                                                ?>">
+                                                                    <i class="glyphicon glyphicon-chevron-right"></i> <?= $submodule->getMenuName() ?>
+                                                                </a>
+                                                            </li>
+
+                                                            <?php
+                                                        }
+                                                    }
+                                                }?>
+                                        
+                                        <?php } ?>
+                                    
+                                </ul>
+                            </li>
+                            <?php
+                        }
+                        ?> 
+                    </ul>
+          <ul class="nav navbar-nav pull-right">
+          	<li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User <span class="caret"></span></a>
+	          <ul class="dropdown-menu">
+	            <li><a href="#">Profile</a></li>	            
+	            <li role="separator" class="divider"></li>
+	            <li><a href="<?= base_url() ?>officer/logout">Log Out</a></li>	            
+	          </ul>
+	        </li>
+          </ul>          
+        </div><!-- /.nav-collapse -->                
+      </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+
+  
