@@ -35,6 +35,7 @@ class KelolaPaket extends MX_Controller implements IControll {
         $this->load->model('Itembarang');
         $this->load->model('Periode');
         $this->load->model('Terimabarang');
+        $this->load->model('Rekapitulasi');
     }
 
     function __destruct() {
@@ -929,6 +930,28 @@ class KelolaPaket extends MX_Controller implements IControll {
         if (is_file($filepath)) {
             $ext = pathinfo($filepath, PATHINFO_EXTENSION);
             $name = "barang.".$ext;
+            $data = file_get_contents($filepath);            
+            force_download($name, $data);
+        } else {
+            echo '<script>';
+            echo 'alert("Maaf belum tersedia!");';
+            echo 'window.history.back(1);';
+            echo '</script>';
+        }
+    }
+    
+    public function getBapMonev($id_registrasi)
+    {
+        $rekapitulasi = new Rekapitulasi();
+        $rekapitulasi->getBy('id_registrasi', $id_registrasi);
+        $doc_path = "/home/pppts/frontends/frontend/web/";
+        $file_path = "";
+        if($rekapitulasi->getFileBeritaAcara() != ''){
+            $file_path = $doc_path . $rekapitulasi->getFileBeritaAcara();
+        }
+        if (is_file($file_path)) {
+            $ext = pathinfo($filepath, PATHINFO_EXTENSION);
+            $name = $id_registrasi."_bap_monev.".$ext;
             $data = file_get_contents($filepath);            
             force_download($name, $data);
         } else {
