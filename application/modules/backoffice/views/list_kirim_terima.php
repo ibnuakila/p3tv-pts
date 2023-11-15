@@ -30,6 +30,12 @@
                 <input type="text" class="form-control input-sm" disabled name="pt" value="<?= $pt->getKota(); ?>">                                        
             </div>
         </div>
+        <div class="form-group">
+            <label for="pt" class="col-lg-3 control-label">Laporan BAP Monev:</label>
+            <div class="col-md-6">
+                <a href="<?= base_url().'backoffice/kelolapaket/getbapmonev/'.$registrasi->getIdRegistrasi()?>" class="btn btn-primary btn-sm" target="new">Unduh</a>                                       
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-condensed table-striped table-bordered">
                 <thead>
