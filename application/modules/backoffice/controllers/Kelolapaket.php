@@ -942,17 +942,18 @@ class KelolaPaket extends MX_Controller implements IControll {
     
     public function getBapMonev($id_registrasi)
     {
+        $this->load->helper('download');
         $rekapitulasi = new Rekapitulasi();
         $rekapitulasi->getBy('id_registrasi', $id_registrasi);
         $doc_path = "/home/pppts/frontends/frontend/web/";
         $file_path = "";
         if($rekapitulasi->getFileBeritaAcara() != ''){
-            $file_path = $doc_path . $rekapitulasi->getFileBeritaAcara();
+            $file_path = $rekapitulasi->getFileBeritaAcara();
         }
         if (is_file($file_path)) {
-            $ext = pathinfo($filepath, PATHINFO_EXTENSION);
+            $ext = pathinfo($file_path, PATHINFO_EXTENSION);
             $name = $id_registrasi."_bap_monev.".$ext;
-            $data = file_get_contents($filepath);            
+            $data = file_get_contents($file_path);            
             force_download($name, $data);
         } else {
             echo '<script>';
