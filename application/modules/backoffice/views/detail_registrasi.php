@@ -202,13 +202,13 @@
                                     <div class="form-group">
                                         <label for="pt" class="col-lg-3 control-label">Kode PT:</label>
                                         <div class="col-lg-12">
-                                            <input type="text" class="form-control input-sm" disabled name="kdpt" value="<?= $pt->getKdPti(); ?>">                                        
+                                            <input type="text" class="form-control input-sm" disabled name="kdpti" id="kdpti" value="<?= $pt->getKdPti(); ?>">                                        
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="pt" class="col-lg-3 control-label">Perguruan Tinggi:</label>
                                         <div class="col-lg-12">
-                                            <input type="text" class="form-control input-sm" disabled name="pt" value="<?= $pt->getNmPti(); ?>">                                        
+                                            <input type="text" class="form-control input-sm" disabled name="nmpti" id="nmpti" value="<?= $pt->getNmPti(); ?>">                                        
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -463,9 +463,9 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="dana" role="tabpanel" aria-labelledby="profile-tab">
-                        <!--<button type="button" class="btn  btn-primary btn-sm mb-2" data-toggle="modal" data-target="#exampleModalLive" fdprocessedid="rh91c">
+                        <button type="button" class="btn  btn-primary btn-sm mb-2" data-toggle="modal" data-target="#exampleModalLive" fdprocessedid="rh91c">
                             Add
-                        </button>-->
+                        </button>
                     <div class="table-responsive">                        
                         <table class="table table-striped">
                             <thead>
@@ -478,6 +478,7 @@
                                     <th>Realisasi Keuangan</th>
                                     <th>Realisasi Vol Output</th>
                                     <th>Bukti Luaran</th>
+                                    <th>Berkas</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -503,10 +504,14 @@
                                     </td>
                                     <td>
                                         <?php if($dana->bukti_luaran != ''){ ?>
-                                            <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadbuktiluaran/' . $dana->id ?>" title="Unduh">
+                                        <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadbuktiluaran/' . $dana->id ?>" title="Unduh">
                                                 <i class="fa fa-download"></i>
                                                 <a/>
                                         <?php } ?>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="edit-dana" id="<?=$dana->id?>"><i class="fa fa-edit"></i></a>
+                                        <a href="#" class="delete-dana" id="<?=$dana->id?>"><i class="fa fa-times"></i></a>
                                     </td>
                                 </tr>
                                 <?php   $no++;
@@ -519,7 +524,7 @@
                             <thead>
                             <th>No Registrasi</th>
                             <th>Berkas</th>
-                            <th>Tgl Upload</th>
+                            <th>Tgl Upload</th>                            
                             <th>Action</th>
                             </thead>
                             <tbody>
@@ -536,6 +541,7 @@
                                                 <i class="fa fa-download"></i>
                                                 <a/>
                                     </td>
+                                    
                                 </tr>
                                 <?php } ?>
                             </tbody>

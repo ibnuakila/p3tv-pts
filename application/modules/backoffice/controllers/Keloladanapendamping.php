@@ -1,5 +1,5 @@
 <?php
-
+require_once ('Icontroll.php');
 
 
 /**
@@ -19,7 +19,7 @@ class KelolaDanaPendamping extends MX_Controller implements IControll {
         $this->load->model('registrasi');
         $this->load->model('verifikasi');
         $this->load->model('periode');
-        //$this->load->model('dokumenperbaikan');
+        $this->load->model('Danapendamping');
         //$this->load->model('dokumenperbaikanupload');
         //$this->load->model('rekapitulasiberitaacara');
         //$this->load->model('ProdiPelaporanPddikti');
@@ -35,7 +35,21 @@ class KelolaDanaPendamping extends MX_Controller implements IControll {
     }
 
     public function edit() {
-        
+        $id = trim($this->input->post('id'));
+        $dana_pendamping = new DanaPendamping($id);
+        if($dana_pendamping->id_registrasi != ''){
+            $data['response'] = true;
+            $data['data'] = ['id' => $dana_pendamping->id,
+                'nama_kegiatan' => $dana_pendamping->nama_kegiatan,
+                'keuangan' => $dana_pendamping->keuangan,
+                'vol_output' => $dana_pendamping->vol_output,
+                'output_kegiatan' => $dana_pendamping->output_kegiatan,
+                'real_keuangan' => $dana_pendamping->real_keuangan,
+                'real_vol_output' => $dana_pendamping->real_vol_output];
+        }else{
+            $data['response'] = false;
+        }
+        echo json_encode($data);
     }
 
     public function find() {
@@ -169,10 +183,49 @@ class KelolaDanaPendamping extends MX_Controller implements IControll {
     }
 
     public function remove() {
-        
+        $id = trim($this->input->post('id'));
+        $dana_pendamping = new DanaPendamping($id);
+        if($dana_pendamping->delete()){
+            $data['response'] = true;
+        }else{
+            $data['response'] = false;
+        }
+        echo json_encode($data);
     }
 
     public function save() {
+        $id = trim($this->input->post('id_dana'));        
+        $kdpti = trim($this->input->post('kdpti'));
+        $id_registrasi = trim($this->input->post('id_registrasi'));
+        $nmpti = trim($this->input->post('nmpti'));
+        $nama_kegiatan = trim($this->input->post('nama_kegiatan'));
+        $keuangan = trim($this->input->post('keuangan'));
+        $vol_output = trim($this->input->post('vol_output'));
+        $output_kegiatan = trim($this->input->post('output_kegiatan'));
+        $real_keuangan = trim($this->input->post('real_keuangan'));
+        $real_vol_output = trim($this->input->post('real_vol_output'));
         
+        $dana_pendamping = new DanaPendamping($id);        
+        $dana_pendamping->id_registrasi = $id_registrasi;
+        $dana_pendamping->kode_pt = $kdpti;
+        $dana_pendamping->nama_pt = $nmpti;
+        $dana_pendamping->nama_kegiatan = $nama_kegiatan;
+        $dana_pendamping->keuangan = $keuangan;
+        $dana_pendamping->vol_output = $vol_output;
+        $dana_pendamping->output_kegiatan = $output_kegiatan;
+        $dana_pendamping->real_keuangan = $real_keuangan;
+        $dana_pendamping->real_vol_output = $real_vol_output;
+        //$ret = null;
+        if($id != ''){
+            $ret = $dana_pendamping->update();
+        }else{
+            $ret = $dana_pendamping->insert();
+        }
+        if($ret){
+            $data['response'] = true;
+        }else{
+            $data['response'] = false;
+        }
+        echo json_encode($data);
     }
 }

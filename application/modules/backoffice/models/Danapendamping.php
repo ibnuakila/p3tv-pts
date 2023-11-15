@@ -21,6 +21,8 @@ class DanaPendamping extends CI_Model implements BaseModel{
     public $keuangan;
     public $vol_output;
     public $output_kegiatan;
+    public $real_keuangan;
+    public $real_vol_output;
     public $bukti_luaran;
     
     function __construct($id = NULL) {
@@ -40,13 +42,15 @@ class DanaPendamping extends CI_Model implements BaseModel{
                     $this->keuangan = $value->keuangan;
                     $this->vol_output = $value->vol_output;
                     $this->output_kegiatan = $value->output_kegiatan;
+                    $this->real_keuangan = $value->real_keuangan;
+                    $this->real_vol_output = $value->real_vol_output;
                     $this->bukti_luaran = $value->bukti_luaran;
                 }
             }
         }
     }
     public function delete() {
-        $this->db->delete('dana_pendamping',['id' => $this->id]);
+        return $this->db->delete('dana_pendamping',['id' => $this->id]);
     }
 
     public function get($row = Null, $segment = Null) {
@@ -69,9 +73,11 @@ class DanaPendamping extends CI_Model implements BaseModel{
             'nama_kegiatan' => $this->nama_kegiatan,
             'keuangan' => $this->keuangan,
             'vol_output' => $this->vol_output,
-            'output_kegiatan' => $this->output_kegiatan
+            'output_kegiatan' => $this->output_kegiatan,
+            'real_keuangan' => $this->real_keuangan,
+            'real_vol_output' => $this->real_vol_output
         ];
-        $this->db->insert('dana_pendamping', $data);
+        return $this->db->insert('dana_pendamping', $data);
     }
 
     public function update() {
@@ -82,10 +88,12 @@ class DanaPendamping extends CI_Model implements BaseModel{
             'nama_kegiatan' => $this->nama_kegiatan,
             'keuangan' => $this->keuangan,
             'vol_output' => $this->vol_output,
-            'output_kegiatan' => $this->output_kegiatan
+            'output_kegiatan' => $this->output_kegiatan,
+            'real_keuangan' => $this->real_keuangan,
+            'real_vol_output' => $this->real_vol_output
         ];
         $this->db->where('id', $this->id);
-        $this->db->update('dana_pendamping', $data);
+        return $this->db->update('dana_pendamping', $data);
     }
     
     public function getResult($params) {
