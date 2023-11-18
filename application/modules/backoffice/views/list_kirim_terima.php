@@ -33,7 +33,7 @@
         <div class="form-group">
             <label for="pt" class="col-lg-3 control-label">Laporan BAP Monev:</label>
             <div class="col-md-6">
-                <a href="<?= base_url().'backoffice/kelolapaket/getbapmonev/'.$registrasi->getIdRegistrasi()?>" class="btn btn-primary btn-sm" target="new">Unduh</a>                                       
+                <a href="<?= base_url().'backoffice/kelolapaket/getbapmonev/'.$registrasi->getIdRegistrasi()?>" class="btn btn-primary btn-sm">Unduh</a>                                       
             </div>
         </div>
         <div class="table-responsive">
