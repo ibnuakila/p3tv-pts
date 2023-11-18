@@ -39,6 +39,8 @@ class KelolaProses extends MX_Controller implements IControll {
         $this->load->model('LaporanCapaian');
         $this->load->model('LaporanIndikator');
         $this->load->model('Jenisevaluasi');
+        $this->load->model('Laporankemajuan');
+        $this->load->model('Danapendamping');
         $this->load->helper('download');
     }
 
@@ -473,11 +475,18 @@ class KelolaProses extends MX_Controller implements IControll {
         //echo 'kodepti: '.$kode_pt.'</br>';
         $prodi_pelaporan = new ProdiPelaporanPddikti();
         //$return = $prodi_pelaporan->getBy('kdpti', $kode_pt);
-
+        $dana = new DanaPendamping();
+        $params = [];
+        $params['paging'] = ['row' => 0, 'segment' => 0];
+        $params['field'][DanaPendamping::table . '.id_registrasi'] = ['=' => $id_reg];
+        $res_dana = $dana->getResult($params);
         $prodi_pelaporan->setKdPti($kode_pt);
         $prodi = $prodi_pelaporan->get('0', '0');
         $data['data_prodi'] = $prodi;
         $data['registrasi'] = $registrasi;
+        $data['danas'] = $res_dana;
+        add_footer_js('tinymce/tinymce.min.js');
+        add_footer_js('js/app/registrasi.js');
         showNewBackEnd($view, $data, 'index-1');
     }
 
