@@ -49,11 +49,18 @@ class KelolaLaporan extends MX_Controller{
         } else {
             echo 'file excel uploaded..</br>';
             $data = $this->upload->data();
-            $objPHPExcel = IOFactory::load($data['full_path']);
-            $objPHPExcel->setActiveSheetIndex(0);
-            
+            $file_path = $data['full_path'];
+            $this->readLaporan($file_path);
             
             redirect(base_url() . 'backoffice/kelolaevaluasi/indexevaluator/');
+        }
+    }
+    
+    public function readLaporan($file_path){
+        if(is_file($file_path)){
+            $objPHPExcel = IOFactory::load($file_path);
+            $objPHPExcel->setActiveSheetIndex(0);
+            
         }
     }
 }
