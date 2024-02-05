@@ -918,6 +918,46 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
             }
         }
     }
+    
+    public function downloadLaporanAkhir($id) {
+        $this->load->helper('download');
+        $this->db->select('*'); $this->db->from('laporan_akhir');$this->db->where('id_registrasi', $id);
+        $res_file_dp = $this->db->get();
+        $row = $res_file_dp->row();
+        $registrasi = new Registrasi($row->id_registrasi);
+        if ($row->id != '') {
+            $path = $lap->filePath;
+            if (is_file($path)) {
+                $ext = pathinfo($path, PATHINFO_EXTENSION);
+                $data = file_get_contents($path);
+                if($row->tipe_file == 'pdf'){
+                    $name = 'Surat_Pernyataan' . $registrasi->getKdPti() .'.'. $ext;
+                }else{
+                    $name = 'Laporan_akhir_' . $registrasi->getKdPti() .'.'. $ext;
+                }
+                //echo 'name: '.$name;
+                //force_download($name, $data);
+            } else {
+                $temp_path = '/home/pppts/frontends/frontend/web/' . $path;
+                //echo 'path: '.$temp_path;
+                if (is_file($temp_path)) {
+                    $ext = pathinfo($path, PATHINFO_EXTENSION);
+                    $data = file_get_contents($path);
+                    if($row->tipe_file == 'pdf'){
+                        $name = 'Surat_Pernyataan' . $registrasi->getKdPti() .'.'. $ext;
+                    }else{
+                        $name = 'Laporan_akhir_' . $registrasi->getKdPti() .'.'. $ext;
+                    }
+                    force_download($name, $data);
+                } else {
+                    echo '<script>';
+                    echo 'alert("File/ Dokumen tidak tersedia !");';
+                    echo 'window.history.back(1);';
+                    echo '</script>';
+                }
+            }
+        }
+    }
 }
 
 ?>
