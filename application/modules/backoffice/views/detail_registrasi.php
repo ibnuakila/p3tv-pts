@@ -462,11 +462,54 @@
                         </table>
                     </div>
                 </div>
+                <!-- dana pendamping -->
                 <div class="tab-pane fade" id="dana" role="tabpanel" aria-labelledby="profile-tab">
                         <button type="button" class="btn  btn-primary btn-sm mb-2" data-toggle="modal" data-target="#exampleModalLive" fdprocessedid="rh91c">
                             Add
                         </button>
-                    <div class="table-responsive">                        
+                    <div class="table-responsive">    
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID Registrasi</th>
+                                    <th>Nama Dokumen</th>
+                                    <th>Tgl Upload</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $this->db->select('*'); $this->db->from('laporan_akhir');$this->db->where('id_registrasi', $registrasi->getIdRegistrasi());
+                                $res_file_dp = $this->db->get();
+                                if($res_file_dp->num_rows() > 0){
+                                    foreach ($res_file_dp->result() as $res){?>
+                                <tr>
+                                    <td><?= $res->id_registrasi?></td>
+                                    <td>
+                                        <?php
+                                            if($res->tipe_file == 'pdf'){
+                                                echo 'Surat Pernyataan';
+                                            }else{
+                                                echo 'Laporan Akhir';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td><?= $res->upload_date?></td>
+                                    <td>
+                                        <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadlaporanakhir/' . $res->id_registrasi ?>" title="Unduh">
+                                                <i class="fa fa-download"></i>
+                                        <a/>
+                                        <?php if($res->tipe_file == 'excel'){ ?>
+                                        <a href="" title="View">
+                                                <i class="fa fa-eye"></i>
+                                        <a/>
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <?php } 
+                                } ?>
+                            </tbody>
+                        </table>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -506,7 +549,7 @@
                                         <?php if($dana->bukti_luaran != ''){ ?>
                                         <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadbuktiluaran/' . $dana->id ?>" title="Unduh">
                                                 <i class="fa fa-download"></i>
-                                                <a/>
+                                        <a/>
                                         <?php } ?>
                                     </td>
                                     <td>
