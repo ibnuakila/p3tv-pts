@@ -50,8 +50,7 @@ class KelolaLaporan extends MX_Controller{
             echo 'file excel uploaded..</br>';
             $data = $this->upload->data();
             $objPHPExcel = IOFactory::load($data['full_path']);
-            $objPHPExcel->setActiveSheetIndex(0);
-            
+            $objPHPExcel->setActiveSheetIndex(0);            
             
             redirect(base_url() . 'backoffice/kelolaevaluasi/indexevaluator/');
         }
