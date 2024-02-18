@@ -463,10 +463,9 @@
                 </div>
                 <!-- dana pendamping -->
                 <div class="tab-pane fade" id="dana" role="tabpanel" aria-labelledby="profile-tab">
-                        <button type="button" class="btn  btn-primary btn-sm mb-2" data-toggle="modal" data-target="#exampleModalLive" fdprocessedid="rh91c">
-                            Add
-                        </button>
-                    <div class="table-responsive">    
+                        
+                    <div class="table-responsive">
+                        <h3>Laporan Akhir</h3>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -509,6 +508,10 @@
                                 } ?>
                             </tbody>
                         </table>
+                        <h3>Realisasi</h3>
+                        <button type="button" class="btn  btn-primary btn-sm mb-2" data-toggle="modal" data-target="#exampleModalLive" fdprocessedid="rh91c">
+                            Add
+                        </button>                        
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -562,6 +565,7 @@
                                 ?>
                             </tbody>
                         </table>
+                        <h3>Laporan Kemajuan</h3>
                         <table class="table table-striped">
                             <thead>
                             <th>No Registrasi</th>
