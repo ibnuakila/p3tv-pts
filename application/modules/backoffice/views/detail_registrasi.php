@@ -494,13 +494,13 @@
                                     </td>
                                     <td><?= $res->upload_date?></td>
                                     <td>
-                                        <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadlaporanakhir/' . $res->id_registrasi ?>" title="Unduh">
+                                        <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadlaporanakhir/' . $res->id ?>" title="Unduh">
                                                 <i class="fa fa-download"></i>
                                         <a/>
                                         <?php if($res->tipe_file == 'excel'){ ?>
-                                        <a href="" title="View">
+                                        <!--<a href="" title="View">
                                                 <i class="fa fa-eye"></i>
-                                        <a/>
+                                        <a/>-->
                                         <?php } ?>
                                     </td>
                                 </tr>
