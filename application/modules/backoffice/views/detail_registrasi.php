@@ -406,7 +406,6 @@
                                             <td><?= $row->id_registrasi ?></td>
                                             <td><?= $row->referensi ?></td>
                                             <td><?= $dok_pres->getNamaFile() ?></td>
-
                                             <td><?= $row->tgl_upload ?></td>
                                             <td><?= $row->revisi ?></td>
                                             <td>
