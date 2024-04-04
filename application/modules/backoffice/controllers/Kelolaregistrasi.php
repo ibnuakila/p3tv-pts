@@ -33,6 +33,9 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
         $this->load->model('Penanggungjawab');
         $this->load->model('Danapendamping');
         $this->load->model('Laporankemajuan');
+        $this->load->model('Laporanakhiriku');
+        $this->load->model('Laporanakhirdanapendamping');
+        $this->load->model('Laporanakhirpemanfaatan');
     }
 
     function __destruct() {
@@ -379,16 +382,35 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
             $params['paging'] = ['row' => 0, 'segment' => 0];
             $params['field'][DanaPendamping::table . '.id_registrasi'] = ['=' => $id_reg];
             $res_dana = $dana->getResult($params);
-
+            
+            $lap_iku = new LaporanAkhirIku();
+            $params1 = [];
+            $params1['paging'] = ['row' => 0, 'segment' => 0];
+            $params1['field'][LaporanAkhirIku::table . '.id_registrasi'] = ['=' => $id_reg];
+            $res_iku = $lap_iku->getResult($params1);
+            
+            $lap_pemanfaatan = new LaporanAkhirPemanfaatan();
+            $params2 = [];
+            $params2['paging'] = ['row' => 0, 'segment' => 0];
+            $params2['field'][LaporanAkhirPemanfaatan::table . '.id_registrasi'] = ['=' => $id_reg];
+            $res_pemanfaatan = $lap_pemanfaatan->getResult($params2);
+            
+            $lap_dana_pendamping = new LaporanAkhirDanaPendamping();
+            $params3 = [];
+            $params3['paging'] = ['row' => 0, 'segment' => 0];
+            $params3['field'][LaporanAkhirDanaPendamping::table . '.id_registrasi'] = ['=' => $id_reg];
+            $res_dana_pendamping = $lap_dana_pendamping->getResult($params3);
+            
             $prodi_pelaporan->setKdPti($kode_pt);
             $prodi = $prodi_pelaporan->get('0', '0');
-            //var_dump($prodi);
-            //$pts = [];
-            //$prodi = [];
-            //$data['pts'] = $pts;
+            
+            
             $data['data_prodi'] = $prodi;
             $data['registrasi'] = $registrasi;
             $data['danas'] = $res_dana;
+            $data['data_lap_iku'] = $res_iku;
+            $data['data_lap_pemanfaatan'] = $res_pemanfaatan;
+            $data['data_lap_dana_pendamping'] = $res_dana_pendamping;
             add_footer_js('tinymce/tinymce.min.js');
             add_footer_js('js/app/registrasi.js');
             showNewBackEnd('backoffice/' . $view, $data, 'index-1');
@@ -957,6 +979,88 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
                 }
             }
         }
+    }
+    
+    public function getLaporanAkhir(){
+        $id = $this->input->post('id');
+        $this->db->select('*'); $this->db->from('laporan_akhir');$this->db->where('id', $id);
+        $res_file_dp = $this->db->get();
+        $row = $res_file_dp->row();
+        $path = $row->filepath;
+        $id_registrasi = $row->id_registrasi;
+        $temp_path = '/home/pppts/frontends/frontend/web/' . $path;
+        if(is_file($temp_path)){
+            $objPHPExcel = \PhpOffice\PhpSpreadsheet\IOFactory::load($temp_path);
+            //sheet indikator
+            $objPHPExcel->setActiveSheetIndex(0);            
+            for($i=2; $i<=5; $i++){
+                $mod_lap_akhiriku = new LaporanAkhirIku($id_registrasi);
+                $indikator_kinerja = $objPHPExcel->getActiveSheet()->getCell('B' . strval($i))->getCalculatedValue();
+                $base_line = $objPHPExcel->getActiveSheet()->getCell('C' . strval($i))->getCalculatedValue();
+                $target = $objPHPExcel->getActiveSheet()->getCell('D' . strval($i))->getCalculatedValue();
+                $capaian = $objPHPExcel->getActiveSheet()->getCell('E' . strval($i))->getCalculatedValue();
+                $kendala = $objPHPExcel->getActiveSheet()->getCell('F' . strval($i))->getCalculatedValue();
+                $solusi = $objPHPExcel->getActiveSheet()->getCell('G' . strval($i))->getCalculatedValue();
+                $mod_lap_akhiriku->id_registrasi = $id_registrasi;
+                $mod_lap_akhiriku->no = $i-1;
+                $mod_lap_akhiriku->indikator_kinerja = $indikator_kinerja;
+                $mod_lap_akhiriku->base_line = $base_line;
+                $mod_lap_akhiriku->target = $target;
+                $mod_lap_akhiriku->capaian = $capaian;
+                $mod_lap_akhiriku->kendala = $kendala;
+                $mod_lap_akhiriku->solusi = $solusi;
+                //if(! $mod_lap_akhiriku->isExist()){
+                    $mod_lap_akhiriku->insert();
+                //}
+            }
+            //sheet peralatan
+            $objPHPExcel->setActiveSheetIndex(1); 
+            $j=2;
+            $check_content = trim($objPHPExcel->getActiveSheet()->getCell('B'.strval($j))->getCalculatedValue());
+            while($check_content != ''){
+                $mod_pemanfaatan = new LaporanAkhirPemanfaatan($id_registrasi);
+                $paket = $objPHPExcel->getActiveSheet()->getCell('A' . strval($j))->getCalculatedValue();
+                $peralatan = $objPHPExcel->getActiveSheet()->getCell('B' . strval($j))->getCalculatedValue();
+                $jumlah = $objPHPExcel->getActiveSheet()->getCell('C' . strval($j))->getCalculatedValue();
+                $status = $objPHPExcel->getActiveSheet()->getCell('D' . strval($j))->getCalculatedValue();
+                $peruntukkan = $objPHPExcel->getActiveSheet()->getCell('E' . strval($j))->getCalculatedValue();
+                $mod_pemanfaatan->id_registrasi = $id_registrasi;
+                $mod_pemanfaatan->paket_barang = $paket;
+                $mod_pemanfaatan->nama_peralatan = $peralatan;
+                $mod_pemanfaatan->jumlah_unit = $jumlah;
+                $mod_pemanfaatan->status = $status;
+                $mod_pemanfaatan->peruntukkan = $peruntukkan;
+                //if(! $mod_pemanfaatan->isExist()){
+                    $mod_pemanfaatan->insert();
+                //}
+                $j++;
+                $check_content = trim($objPHPExcel->getActiveSheet()->getCell('B'.strval($j))->getCalculatedValue());
+            }
+            //sheet dana pendamping
+            $objPHPExcel->setActiveSheetIndex(2);
+            $j=2;
+            $check_content = $objPHPExcel->getActiveSheet()->getCell('B'.strval($j))->getCalculatedValue();
+            while($check_content != ''){
+                $mod_lap_dana = new LaporanAkhirDanaPendamping($id_registrasi);
+                $mod_lap_dana->id_registrasi = $id_registrasi;
+                $mod_lap_dana->jns_kegiatan = $objPHPExcel->getActiveSheet()->getCell('A' . strval($j))->getCalculatedValue();
+                $mod_lap_dana->nama_kegiatan = $objPHPExcel->getActiveSheet()->getCell('B' . strval($j))->getCalculatedValue();
+                $mod_lap_dana->mata_kuliah = $objPHPExcel->getActiveSheet()->getCell('C' . strval($j))->getCalculatedValue();
+                $mod_lap_dana->tgl_pelaksanaan = $objPHPExcel->getActiveSheet()->getCell('D' . strval($j))->getCalculatedValue();
+                $mod_lap_dana->dana_pts = $objPHPExcel->getActiveSheet()->getCell('E' . strval($j))->getCalculatedValue();
+                $mod_lap_dana->realisasi_dana_pts = $objPHPExcel->getActiveSheet()->getCell('F' . strval($j))->getCalculatedValue();
+                $mod_lap_dana->output_luaran = $objPHPExcel->getActiveSheet()->getCell('G' . strval($j))->getCalculatedValue();
+                //if(! $mod_lap_dana->isExist()){
+                    $mod_lap_dana->insert();
+                //}
+                $j++;
+                $check_content = trim($objPHPExcel->getActiveSheet()->getCell('B'.strval($j))->getCalculatedValue());
+            }
+            $data['response'] = true;
+        }else{
+            $data['response'] = false;
+        }
+        echo json_encode($data);
     }
 }
 

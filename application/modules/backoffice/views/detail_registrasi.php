@@ -38,10 +38,12 @@
                                 <li><a class="nav-link text-left" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">PTI</a></li>
                                 <li><a class="nav-link text-left" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Prodi Usulan</a></li>
                                 <li><a class="nav-link text-left" id="v-pills-pj-tab" data-toggle="pill" href="#v-pills-pj" role="tab" aria-controls="v-pills-pj" aria-selected="false">Penanggung Jawab</a></li>
+                                <li><a class="nav-link text-left" id="v-pills-lap-tab" data-toggle="pill" href="#v-pills-lap" role="tab" aria-controls="v-pills-lap" aria-selected="false">Pelaporan</a></li>
                             </ul>
                         </div>
                         <div class="col-md-9 col-sm-12">
                             <div class="tab-content" id="v-pills-tabContent">
+                                <!-- Tab Data Usulan -->
                                 <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
                                     <div class="container">
                                         <form action="" class="form-horizontal">
@@ -154,6 +156,7 @@
                                         </form>
                                     </div>
                                 </div>
+                                
                                 <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                                     <div class="form-group">
                                         <label for="yayasan" class="col-lg-3 control-label">Yayasan:</label>
@@ -223,6 +226,24 @@
                                             <input type="text" class="form-control input-sm" disabled name="pt" value="<?= $pt->getKota(); ?>">                                        
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="pt" class="col-lg-3 control-label">Akreditasi:</label>
+                                        <div class="col-lg-12">
+                                            <input type="text" class="form-control input-sm" disabled name="akreditasi" id="akreditasi" value="">                                        
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pt" class="col-lg-3 control-label">No SK Akreditasi:</label>
+                                        <div class="col-lg-12">
+                                            <input type="text" class="form-control input-sm" disabled name="no_sk_akre" id="no-sk-akre" value="">                                        
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="pt" class="col-lg-3 control-label">Tgl SK Akreditasi:</label>
+                                        <div class="col-lg-12">
+                                            <input type="text" class="form-control input-sm" disabled name="tgl_sk_akre" id="tgl-sk-akre" value="">                                        
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
                                     <div class="table-responsive">
@@ -277,12 +298,26 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="tab-pane fade" id="v-pills-lap" role="tabpanel" aria-labelledby="v-pills-lap-tab">
+                                    <div class="table-responsive">
+                                        <table class="mytable" id="tbl-laporan">
+                                            <thead>
+                                                <tr>
+                                                    <th>Semester</th>
+                                                    <th>Aktifitas</th>
+                                                    <th>Persentase</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                 </div>
-
+                <!-- Tab Dokumen -->
                 <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                     <div class="table-responsive">
                         <table class="mytable">
@@ -461,7 +496,7 @@
                         </table>
                     </div>
                 </div>
-                <!-- dana pendamping -->
+                <!-- Tab dana pendamping -->
                 <div class="tab-pane fade" id="dana" role="tabpanel" aria-labelledby="profile-tab">
                         
                     <div class="table-responsive">
@@ -497,17 +532,126 @@
                                         <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadlaporanakhir/' . $res->id ?>" title="Unduh">
                                                 <i class="fa fa-download"></i>
                                         <a/>
-                                        <?php if($res->tipe_file == 'excel'){ ?>
-                                        <!--<a href="" title="View">
+                                        <?php if($res->tipe_file == 'excel'){ 
+                                                $lap_akhir_iku = new LaporanAkhirIku($res->id_registrasi);
+                                                if(!$lap_akhir_iku->isExist()){
+                                            ?>
+                                        <a href="" title="Read Laporan Akhir" id="get-laporan" id-laporan="<?=$res->id?>">
                                                 <i class="fa fa-eye"></i>
-                                        <a/>-->
-                                        <?php } ?>
+                                        <a/>
+                                        <?php   } 
+                                        }?>
                                     </td>
                                 </tr>
                                 <?php } 
                                 } ?>
                             </tbody>
                         </table>
+                        <div class="container">
+                            <ul class="nav nav-tabs mb-3" id="tab-lap-akhir" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active text-uppercase" id="indikator-tab" data-toggle="tab" href="#indikator" role="tab" aria-controls="indikator" aria-selected="true">Indikator</a>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" id="peralatan-tab" data-toggle="tab" href="#peralatan" role="tab" aria-controls="peralatan" aria-selected="false">Peralatan</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-uppercase" id="dana-pendamping-tab" data-toggle="tab" href="#dana-pendamping" role="tab" aria-controls="dana-pendamping" aria-selected="false">Dana Pendamping</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="content-tab-lap-akhir">
+                                <div class="tab-pane fade show active" id="indikator" role="tabpanel" aria-labelledby="indikator-tab">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                            <th>Indikator Kinerja</th>
+                                            <th>Base Line</th>
+                                            <th>Target</th>
+                                            <th>Capaian (%)</th>
+                                            <th>Kendala</th>
+                                            <th>Solusi</th>
+                                            </thead>
+                                            <tbody>
+                                                <?php 
+                                                if(isset($data_lap_iku) && $data_lap_iku->num_rows()>0){
+                                                        foreach ($data_lap_iku->result() as $value) {?>
+                                                <tr>
+                                                    <td><?=$value->indikator_kinerja ?></td>
+                                                    <td><?=$value->base_line?></td>
+                                                    <td><?=$value->target?></td>
+                                                    <td><?=$value->capaian?></td>
+                                                    <td><?=$value->kendala?></td>
+                                                    <td><?=$value->solusi?></td>
+                                                </tr>
+                                                <?php
+                                                        }
+                                                }?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                </div>
+                                <div class="tab-pane fade" id="peralatan" role="tabpanel" aria-labelledby="peralatan-tab">
+                                    <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <th>Paket Barang</th>
+                                        <th>Nama Peralatan</th>
+                                        <th>Jumlah Unit</th>
+                                        <th>Status</th>
+                                        <th>Peruntukkan</th>                                        
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                                if(isset($data_lap_pemanfaatan) && $data_lap_pemanfaatan->num_rows()>0){
+                                                        foreach ($data_lap_pemanfaatan->result() as $value) {?>
+                                                <tr>
+                                                    <td><?=$value->paket_barang ?></td>
+                                                    <td><?=$value->nama_peralatan?></td>
+                                                    <td><?=$value->jumlah_unit?></td>
+                                                    <td><?=$value->status?></td>
+                                                    <td><?=$value->peruntukkan?></td>                                                    
+                                                </tr>
+                                                <?php
+                                                        }
+                                                }?>
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="dana-pendamping" role="tabpanel" aria-labelledby="dana-pendamping-tab">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                        <thead>
+                                        <th>Jenis Kegiatan</th>
+                                        <th>Nama Kegiatan</th>
+                                        <th>Mata Kuliah</th>
+                                        <th>Tgl Pelaksanaan</th>
+                                        <th>Dana PTS</th>
+                                        <th>Realisasi Dana PTS</th>
+                                        <th>Luaran</th>                                        
+                                        </thead>
+                                        <tbody>
+                                            <?php 
+                                                if(isset($data_lap_dana_pendamping) && $data_lap_dana_pendamping->num_rows()>0){
+                                                        foreach ($data_lap_dana_pendamping->result() as $value) {?>
+                                                <tr>
+                                                    <td><?=$value->jns_kegiatan ?></td>
+                                                    <td><?=$value->nama_kegiatan?></td>
+                                                    <td><?=$value->mata_kuliah?></td>
+                                                    <td><?=$value->tgl_pelaksanaan?></td>
+                                                    <td><?=$value->dana_pts?></td>
+                                                    <td><?=$value->realisasi_dana_pts?></td>
+                                                    <td><?=$value->output_luaran?></td>
+                                                </tr>
+                                                <?php
+                                                        }
+                                                }?>
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <h3>Realisasi</h3>
                         <button type="button" class="btn  btn-primary btn-sm mb-2" data-toggle="modal" data-target="#exampleModalLive" fdprocessedid="rh91c">
                             Add

@@ -21,7 +21,22 @@
               </p>
               <a href="<?=base_url()?>assets/document/tutorial_sistem_silemkerma.pdf" class="btn btn-outline-primary">
                 Panduan
-              </a>
+              </a>  <?php 
+              $user1 = $user->getUserId();
+             
+              
+              
+              if ($user1=='ADH' || $user1=='RMT' || $user1=='HRY' ) {
+                   $data = $this->db->query("SELECT count(*) jml FROM user_pengusul where status=0")->row();
+              if ($data->jml > 0) {
+                  $jml = $data->jml;
+                                } else {
+                                    $jml=0;
+                                }
+                  ?>
+               <a href="<?=base_url()?>monitoring/monitoring" class="btn btn-outline-danger">
+              <?php echo $jml; ?> Pengajuan Akun Baru
+              </a>   <?php } ?>
             </div>
         </div>
     </div>
