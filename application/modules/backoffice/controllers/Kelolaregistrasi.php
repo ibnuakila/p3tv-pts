@@ -278,7 +278,7 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
                 $params['paging'] = ['row' => 10, 'segment' => $segment];
             }
             $table = 'registrasi';
-            $params['field'][$table . '.periode'] = ['=' => $current_periode[0]];
+            
             if ($id_registrasi != '') {
                 $params['field'][$table . '.id_registrasi'] = ['=' => $id_registrasi];
             }
@@ -290,6 +290,8 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
               } */
             if ($periode != '') {
                 $params['field'][$table . '.periode'] = ['=' => $periode];
+            }else{
+                $params['field'][$table . '.periode'] = ['=' => $current_periode->periode];
             }
             if ($status_registrasi != '') {
                 $params['field'][$table . '.id_status_registrasi'] = ['=' => $status_registrasi];

@@ -351,7 +351,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             $params['join']['proses'] = ['INNER' => 'proses.id_proses=evaluasi_proses.id_proses'];
             $params['join']['proses_registrasi'] = ['INNER' => 'proses.id_proses=proses_registrasi.id_proses'];
             $params['join']['registrasi'] = ['INNER' => 'registrasi.id_registrasi=proses_registrasi.id_registrasi'];
-            $params['field']['registrasi.periode'] = ['=' => $current_periode[0]];
+            $params['field']['registrasi.periode'] = ['=' => $current_periode->periode];
             if ($id_registrasi != '') {
                 $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
             }
@@ -459,7 +459,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             $evaluasi = new Evaluasi();
             $periode = new Periode();
             $current_periode = $periode->getOpenPeriode();
-
+            var_dump($current_periode);
             $params = [];
             if ($this->input->post('export')) {
                 $params['paging'] = ['row' => 0, 'segment' => 0];
@@ -471,7 +471,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             $params['join']['proses'] = ['INNER' => 'proses.id_proses=evaluasi_proses.id_proses'];
             $params['join']['proses_registrasi'] = ['INNER' => 'proses.id_proses=proses_registrasi.id_proses'];
             $params['join']['registrasi'] = ['INNER' => 'registrasi.id_registrasi=proses_registrasi.id_registrasi'];
-            $params['field']['registrasi.periode'] = ['=' => $current_periode[0]];
+            $params['field']['registrasi.periode'] = ['=' => $current_periode->periode];
             if ($id_registrasi != '') {
                 $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
             }

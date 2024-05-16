@@ -111,6 +111,7 @@ class Periode extends CI_Model implements BaseModel
 	{
             $this->db->select('*');
             $this->db->from('tbl_periode');
+            $this->db->order_by('periode','desc');
             if ($row == NULL && $segment == NULL) {
                 return $this->db->count_all_results();
             } elseif ($row == 0 && $segment == 0) {
@@ -169,7 +170,8 @@ class Periode extends CI_Model implements BaseModel
             $this->db->from('tbl_periode');
             $this->db->where('status_periode', 'open');
             $result = $this->db->get();
-            $periodes = array();
+            $row = $result->row();
+            /*$periodes = array();
             if($result->num_rows()>0){
                 foreach($result->result() as $row){
                     $periodes[]=$row->periode;
@@ -182,8 +184,8 @@ class Periode extends CI_Model implements BaseModel
                 foreach($result->result() as $row){
                     $periodes[]=$row->periode;
                 }
-            }
-            return $periodes;
+            }*/
+            return $row;
         }
 
 }

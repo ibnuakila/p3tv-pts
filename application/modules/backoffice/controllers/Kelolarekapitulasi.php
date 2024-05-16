@@ -165,7 +165,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
             }
                         
             $params['join']['registrasi'] = ['INNER' => Rekapitulasi::table.'.id_registrasi=registrasi.id_registrasi'];
-            $params['field']['registrasi.periode'] = ['=' => $current_periode[0]];
+            $params['field']['registrasi.periode'] = ['=' => $current_periode->periode];
             if ($id_registrasi != '') {
                 $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
             }
