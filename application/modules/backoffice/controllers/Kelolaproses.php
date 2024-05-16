@@ -223,7 +223,7 @@ class KelolaProses extends MX_Controller implements IControll {
         $jns_usulan = trim($this->input->post('jns_usulan'));
         $evaluator = trim($this->input->post('evaluator'));
         $status_proses = trim($this->input->post('status_proses'));
-
+        $opt_periode = trim($this->input->post('periode'));
         $segment = $this->uri->segment(4, 0);
         $temp_post = $this->input->post(NULL, TRUE);
         if (!$temp_post) {
@@ -233,6 +233,7 @@ class KelolaProses extends MX_Controller implements IControll {
             $jns_usulan = trim($this->session->flashdata('jns_usulan'));
             $evaluator = trim($this->session->flashdata('evaluator'));
             $status_proses = trim($this->session->flashdata('status_proses'));
+            $opt_periode = trim($this->session->flashdata('periode'));
         }
         $temp_filter = array(
             'id_registrasi' => $id_registrasi,
@@ -240,14 +241,21 @@ class KelolaProses extends MX_Controller implements IControll {
             'pti' => $pti,
             'jns_usulan' => $jns_usulan,
             'evaluator' => $evaluator,
-            'status_proses' => $status_proses
+            'status_proses' => $status_proses,
+            'periode' => $opt_periode
         );
         $this->session->set_flashdata($temp_filter);
 
         $proses = new Proses();
         $periode = new Periode();
-        $current_periode = $periode->getOpenPeriode();
-
+        //$current_periode = $periode->getOpenPeriode();
+        $temp_current_periode = $periode->getOpenPeriode();
+            
+        if($opt_periode == ''){                
+            $current_periode = $temp_current_periode->periode;
+        }else{
+            $current_periode = $opt_periode;
+        }
         $params = [];
         if ($this->input->post('export')) {
             $params['paging'] = ['row' => 0, 'segment' => 0];
@@ -257,7 +265,7 @@ class KelolaProses extends MX_Controller implements IControll {
         $table = 'proses';
         $params['join']['proses_registrasi'] = ['INNER' => $table . '.id_proses=proses_registrasi.id_proses'];
         $params['join']['registrasi'] = ['INNER' => 'registrasi.id_registrasi=proses_registrasi.id_registrasi'];
-        $params['field']['registrasi.periode'] = ['=' => $current_periode[0]];
+        //$params['field']['registrasi.periode'] = ['=' => $current_periode];
 
         if ($id_registrasi != '') {
             $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
@@ -270,9 +278,9 @@ class KelolaProses extends MX_Controller implements IControll {
             $params['join']['tbl_pti'] = ['INNER' => 'registrasi.kdpti = tbl_pti.kdpti'];
             $params['field']['tbl_pti.nmpti'] = ['LIKE' => $pti];
         }
-        /* if ($jns_usulan != '') {
-          $params['field']['registrasi.jns_usulan'] = $jns_usulan;
-          } */
+        if ($current_periode != '') {            
+            $params['field']['registrasi.periode'] = ['=' => $current_periode];
+        }
         if ($evaluator != '') {
             $params['join']['evaluator'] = ['INNER' => "proses.id_evaluator = evaluator.id_evaluator"];
             $params['field']['evaluator.nm_evaluator'] = ['LIKE' => $evaluator];

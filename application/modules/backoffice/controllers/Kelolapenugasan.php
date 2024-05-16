@@ -216,7 +216,7 @@ class KelolaPenugasan extends MX_Controller implements IControll
                 $yayasan = trim($this->input->post('yayasan'));
                 $pti = trim($this->input->post('pti'));
                 $tgl_registrasi = trim($this->input->post('tgl_registrasi'));
-                $periode = trim($this->input->post('periode'));
+                $opt_periode = trim($this->input->post('periode'));
                 $schema = trim($this->input->post('schema'));
                 $status_registrasi = trim($this->input->post('status_registrasi'));
                 $publish_verifikasi = trim($this->input->post('publish_verifikasi'));
@@ -228,7 +228,7 @@ class KelolaPenugasan extends MX_Controller implements IControll
                     $yayasan = trim($this->session->flashdata('yayasan'));
                     $pti = trim($this->session->flashdata('pti'));
                     $tgl_registrasi = trim($this->session->flashdata('tgl_registrasi'));
-                    $periode = trim($this->session->flashdata('periode'));
+                    $opt_periode = trim($this->session->flashdata('periode'));
                     $status_registrasi = trim($this->session->flashdata('status_registrasi'));
                     $publish_verifikasi = trim($this->session->flashdata('publish_verifikasi'));
                     $schema = trim($this->session->flashdata('schema'));
@@ -238,17 +238,21 @@ class KelolaPenugasan extends MX_Controller implements IControll
                                 'yayasan' => $yayasan,
                                 'pti' => $pti,                    
                                 'tgl_registrasi' => $tgl_registrasi,
-                                'periode' => $periode,
+                                'periode' => $opt_periode,
                                 'schema' => $schema,
                                 'status_registrasi' => $status_registrasi,
                                 'publish_verifikasi' => $publish_verifikasi
                             );
                 $this->session->set_flashdata($flash_data);
-                $mperiode = new Periode();
-                $mperiode->getBy('status_periode', 'open');                
-                $current_periode = $mperiode->getOpenPeriode();
-                $open_periode = $current_periode[0];
-                        
+                $periode = new Periode();
+                
+                $temp_current_periode = $periode->getOpenPeriode();
+            
+                if($opt_periode == ''){                
+                    $current_periode = $temp_current_periode->periode;
+                }else{
+                    $current_periode = $opt_periode;
+                }        
                 $params = [];
                 if ($this->input->post('export')) {
                     $params['paging'] = ['row' => 0, 'segment' => 0];
@@ -258,7 +262,7 @@ class KelolaPenugasan extends MX_Controller implements IControll
                 $table = 'registrasi';
                 $params['field'][$table.'.id_status_registrasi'] = ['IN' => [2,3,11,8]];
                 $params['field'][$table.'.penugasan'] = ['<' => 2];
-                $params['field'][$table.'.periode'] = ['=' => $open_periode];
+                $params['field'][$table.'.periode'] = ['=' => $current_periode];
                 if($id_registrasi != ''){                    
                     $params['field'][$table.'.id_registrasi'] = ['=' => $id_registrasi];
                 }
@@ -268,8 +272,8 @@ class KelolaPenugasan extends MX_Controller implements IControll
                 if($schema != ''){                
                     $params['field'][$table.'.skema'] = ['=' => $schema];
                 }
-                if($periode != ''){                
-                    $params['field'][$table.'.periode'] = ['=' => $periode];
+                if($current_periode != ''){                
+                    $params['field'][$table.'.periode'] = ['=' => $current_periode];
                 }
                 if($status_registrasi != ''){                    
                     $params['field'][$table.'.id_status_registrasi'] = ['=' => $status_registrasi];
@@ -300,7 +304,7 @@ class KelolaPenugasan extends MX_Controller implements IControll
                 setPagingTemplate($base_url, $uri_segment, $total_row, $per_page);
                 //data periode
                 //$mperiode = new Periode();
-                $result_periode = $mperiode->get('0','0');
+                $result_periode = $periode->get('0','0');
                 $option_periode = array('' => '~Pilih~');      
                 foreach ($result_periode->result() as $value) {
                     $option_periode[$value->periode] = $value->periode;

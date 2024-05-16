@@ -128,7 +128,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
             $id_registrasi = trim($this->input->post('id_registrasi'));
             $yayasan = trim($this->input->post('yayasan'));
             $pti = trim($this->input->post('pti'));
-            //$jns_usulan = trim($this->input->post('jns_usulan'));
+            $opt_periode = trim($this->input->post('periode'));
             $evaluator = trim($this->input->post('evaluator'));
             $status_registrasi = trim($this->input->post('status_registrasi'));
 
@@ -139,7 +139,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
                 $id_registrasi = trim($this->session->flashdata('id_registrasi'));
                 $yayasan = trim($this->session->flashdata('yayasan'));
                 $pti = trim($this->session->flashdata('pti'));
-                $jns_usulan = trim($this->session->flashdata('jns_usulan'));
+                $opt_periode = trim($this->session->flashdata('periode'));
                 $evaluator = trim($this->session->flashdata('evaluator'));
                 $status_registrasi = trim($this->session->flashdata('status_registrasi'));
             }
@@ -147,7 +147,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
                 'id_registrasi' => $id_registrasi,
                 'yayasan' => $yayasan,
                 'pti' => $pti,
-                //'jns_usulan' => $jns_usulan,
+                'periode' => $opt_periode,
                 'evaluator' => $evaluator,
                 'status_registrasi' => $status_registrasi
             );
@@ -155,8 +155,14 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
 
             $evaluasi = new Rekapitulasi();
             $periode = new Periode();
-            $current_periode = $periode->getOpenPeriode();
-
+            //$current_periode = $periode->getOpenPeriode();
+            $temp_current_periode = $periode->getOpenPeriode();
+            
+            if($opt_periode == ''){                
+                $current_periode = $temp_current_periode->periode;
+            }else{
+                $current_periode = $opt_periode;
+            }
             $params = [];
             if ($this->input->post('export')) {
                 $params['paging'] = ['row' => 0, 'segment' => 0];
@@ -165,7 +171,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
             }
                         
             $params['join']['registrasi'] = ['INNER' => Rekapitulasi::table.'.id_registrasi=registrasi.id_registrasi'];
-            $params['field']['registrasi.periode'] = ['=' => $current_periode->periode];
+            //$params['field']['registrasi.periode'] = ['=' => $current_periode->periode];
             if ($id_registrasi != '') {
                 $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
             }
@@ -177,9 +183,9 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
                 $params['join']['tbl_pti'] = ['INNER' => 'registrasi.kdpti = tbl_pti.kdpti'];
                 $params['field']['tbl_pti.nmpti'] = ['LIKE' => $pti];
             }
-            /* if ($jns_usulan != '') {
-              $params['field']['registrasi.jns_usulan'] = $jns_usulan;
-              } */
+            if ($current_periode != '') {
+                $params['field']['registrasi.periode'] = ['=' => $current_periode];
+            }
             if ($evaluator != '') {
                 $params['join']['evaluator'] = ["INNER" => "proses.id_evaluator = evaluator.id_evaluator"];
                 $params['field']['evaluator.nm_evaluator'] = ['LIKE' => $evaluator];
