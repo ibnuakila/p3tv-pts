@@ -338,7 +338,7 @@ class KelolaProses extends MX_Controller implements IControll {
         $jns_usulan = trim($this->input->post('jns_usulan'));
         $evaluator = trim($this->input->post('evaluator'));
         $status_proses = trim($this->input->post('status_proses'));
-
+        $opt_periode = trim($this->input->post('periode'));
         $segment = $this->uri->segment(4, 0);
         $temp_post = $this->input->post(NULL, TRUE);
         if (!$temp_post) {
@@ -348,6 +348,7 @@ class KelolaProses extends MX_Controller implements IControll {
             $jns_usulan = trim($this->session->flashdata('jns_usulan'));
             $evaluator = trim($this->session->flashdata('evaluator'));
             $status_proses = trim($this->session->flashdata('status_proses'));
+            $opt_periode = trim($this->session->flashdata('periode'));
         }
         $temp_filter = array(
             'id_registrasi' => $id_registrasi,
@@ -361,7 +362,7 @@ class KelolaProses extends MX_Controller implements IControll {
 
         $proses = new Proses();
         $periode = new Periode();
-        $current_periode = $periode->getOpenPeriode();
+        $temp_current_periode = $periode->getOpenPeriode();
         $user = new ModUsers($this->session->userdata('userid'));
         $params = [];
         if ($this->input->post('export')) {
@@ -372,7 +373,12 @@ class KelolaProses extends MX_Controller implements IControll {
         $table = 'proses';
         $params['join']['proses_registrasi'] = ['INNER' => $table . '.id_proses=proses_registrasi.id_proses'];
         $params['join']['registrasi'] = ['INNER' => 'registrasi.id_registrasi=proses_registrasi.id_registrasi'];
-        $params['field']['registrasi.periode'] = ['=' => $current_periode[0]];
+        //$params['field']['registrasi.periode'] = ['=' => $current_periode[0]];
+        if($opt_periode == ''){                
+            $current_periode = $temp_current_periode->periode;
+        }else{
+            $current_periode = $opt_periode;
+        }
         $params['field']['proses.id_evaluator'] = ['=' => $user->getIdEvaluator()];
         $params['field'][$table . '.id_status_proses'] = ['IN' => [1, 2, 4]];
         if ($id_registrasi != '') {

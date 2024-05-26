@@ -186,6 +186,9 @@
                                                     <i class="fa fa-list-alt"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah Hasil">
                                                     <i class="fa fa-upload"></i> </a>
+                                                <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>" 
+                                                       title="Data Barang" target="_new">                        
+                                                        <i class="fa fa-shopping-cart"></i> </a>
                                                 <?php
                                                 //}
                                                 ?>
