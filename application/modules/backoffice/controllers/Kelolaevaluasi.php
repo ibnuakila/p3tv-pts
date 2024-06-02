@@ -647,7 +647,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                 $this->form_validation->set_rules('idregistrasi', 'Registrasi', 'required|numeric');
                 $this->form_validation->set_rules('jns_evaluasi', 'Jenis Evaluasi', 'required|numeric');
                 $this->form_validation->set_rules('jns_file', 'Jenis Dokumen', 'required');
-                $this->form_validation->set_rules('userfile', 'File', 'required');
+                //$this->form_validation->set_rules('userfile', 'File', 'required');
 
                 $idregistrasi = $this->input->post('idregistrasi');
                 $jns_evaluasi = $this->input->post('jns_evaluasi');
