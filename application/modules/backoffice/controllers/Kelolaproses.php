@@ -381,6 +381,10 @@ class KelolaProses extends MX_Controller implements IControll {
         }
         $params['field']['proses.id_evaluator'] = ['=' => $user->getIdEvaluator()];
         $params['field'][$table . '.id_status_proses'] = ['IN' => [1, 2, 4]];
+        if ($current_periode != '') {
+                $params['field']['registrasi.periode'] = ['=' => $current_periode];
+            }
+
         if ($id_registrasi != '') {
             $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
         }
@@ -455,7 +459,7 @@ class KelolaProses extends MX_Controller implements IControll {
           }elseif($schema=='B' || $schema=='A'){
           $filepath = realpath(APPPATH . '../assets/documents/template_penilaian_skema_b.xlsx');
           } */
-        $filepath = realpath(APPPATH . '../assets/documents/Template-Penilaian-P3TV-PTS-2023.xlsx');
+        $filepath = realpath(APPPATH . '../assets/documents/Template-Penilaian-P3TV-PTS-2024.xlsx');
 
         $name = $registrasi->getIdRegistrasi() . '_' . str_replace(' ', '_', $pt->getNmPti()) . '_' . $eval . '.xlsx';
         //$archive = realpath(APPPATH . '../assets/documents/');

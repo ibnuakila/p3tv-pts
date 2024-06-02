@@ -274,7 +274,7 @@ class KelolaBarang extends MX_Controller implements IControll {
         $sub_kategori = new ItemSubKategori();
         $tbl_periode = new Periode();
         $open_periode = $tbl_periode->getOpenPeriode();
-        $periode = $open_periode[0];
+        $periode = $open_periode->periode;
         $params['paging'] = ['row' => 0, 'segment' => 0];
         $params['field']['LEFT('.ItemSubKategori::table.'.kd_sub_kategori,2)'] = ['=' => $kd_kategori];
         $params['field'][ItemSubKategori::table.'.periode'] = ['=' => $periode];
@@ -295,7 +295,7 @@ class KelolaBarang extends MX_Controller implements IControll {
         $id_item = $this->input->post('id_item');
         $tbl_periode = new Periode();
         $open_periode = $tbl_periode->getOpenPeriode();
-        $periode = $open_periode[0];
+        $periode = $open_periode->periode;
         $params = array('id_item' => $id_item, 'periode' => $periode);
         $item_barang = new ItemBarang($params);
         $data[] = array(
@@ -326,7 +326,7 @@ class KelolaBarang extends MX_Controller implements IControll {
         $item_hibah = new ItemHibah($id);
         $tbl_periode = new Periode();
         $open_periode = $tbl_periode->getOpenPeriode();
-        $periode = $open_periode[0];
+        $periode = $open_periode->periode;
         $params = array('id_item' => $item_hibah->getIdItem(), 'periode' => $periode);
         $item_barang = new ItemBarang($params);
         $data[] = array(
@@ -356,7 +356,7 @@ class KelolaBarang extends MX_Controller implements IControll {
             $item_barang = new ItemBarang();
             $tbl_periode = new Periode();
             $open_periode = $tbl_periode->getOpenPeriode();
-            $periode = $open_periode[0];
+            $periode = $open_periode->periode;
             if($keyword!=''){
                 $params['field']['tbl_item_barang.barang'] = ['LIKE'=>$keyword];
                 $params['field']['LEFT(kd_barang,6)'] = ['='=>$sub_kategori];
@@ -398,7 +398,7 @@ class KelolaBarang extends MX_Controller implements IControll {
                 );
         $tbl_periode = new Periode();
         $open_periode = $tbl_periode->getOpenPeriode();
-        $periode = $open_periode[0];
+        $periode = $open_periode->periode;
         /*if($registrasi->getJnsUsulan()=='01'){//barang
             //$params['join']['tbl_item_barang'] = "tbl_item_hibah.id_item = tbl_item_barang.id_item";
             //$params['field']['periode'] = $registrasi->getPeriode();
@@ -442,7 +442,7 @@ class KelolaBarang extends MX_Controller implements IControll {
             }
             $tbl_periode = new Periode();
         $open_periode = $tbl_periode->getOpenPeriode();
-        $periode = $open_periode[0];
+        $periode = $open_periode->periode;
         //$data['grand_total'] = $grand_total;
         $data['periode'] = $periode;
         $data['item_hibah'] = $res_item_hibah;

@@ -186,11 +186,14 @@
                                                     <i class="fa fa-list-alt"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah Hasil">
                                                     <i class="fa fa-upload"></i> </a>
+                                                <?php
+                                                if ($obj->type_evaluator == '1') {//reviewer ---------
+                                                    ?>
                                                 <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>" 
                                                        title="Data Barang" target="_new">                        
                                                         <i class="fa fa-shopping-cart"></i> </a>
                                                 <?php
-                                                //}
+                                                }
                                                 ?>
 
                                                 <?php
@@ -208,8 +211,6 @@
                                                        title="Berita Acara Final" target="_new">
                                                         <i class="fa fa-file-word"></i>
                                                     </a>
-
-
                                                     <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>" title="Daftar Dokumen">
                                                         <i class="fa fa-list-alt"></i> </a>
                                                     <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah File">

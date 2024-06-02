@@ -152,6 +152,9 @@
                                     ?>
                                         <a href="<?= base_url() . 'backoffice/kelolaevaluasi/addcomment/' . $reg->getIdRegistrasi() . '/' . $pro->getIdProses();?>" title="Komentar Terkonsolidasi">
                                             <i class="fa fa-comment"></i> </a>
+                                        <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>" 
+                                                       title="Data Barang" target="_new">                        
+                                                        <i class="fa fa-shopping-cart"></i> </a>
                                     <?php } ?>
                                         
                                     </td>

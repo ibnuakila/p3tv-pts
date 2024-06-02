@@ -155,7 +155,7 @@ class Registrasi extends CI_Model implements BaseModel {
         $this->db->join('proses_registrasi pr', 'r.id_registrasi = pr.id_registrasi');
         $this->db->join('proses p', 'pr.id_proses = p.id_proses');
         $this->db->where('r.id_registrasi', $this->idRegistrasi);
-        $this->db->where('p.id_jns_evaluasi', '2');
+        //$this->db->where('p.id_jns_evaluasi', '2');
         $result = $this->db->get();
         $this->objProses = new ArrayObject();
         if ($result->num_rows() > 0) {

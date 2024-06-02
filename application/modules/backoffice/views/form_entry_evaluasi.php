@@ -41,6 +41,7 @@
                             <input type="hidden" name="idregistrasi" value="<?= $registrasi->getIdRegistrasi() ?>">
                             <input type="hidden" name="jns_evaluasi" value="<?= $proses->getIdJnsEvaluasi() ?>">
                             <input type="hidden" name="type_evaluator" value="<?= $proses->getTypeEvaluator() ?>">
+                            <input type="hidden" name="jns_file" value="<?=0 ?>">
                         </div>
                     </div>
                     <?php

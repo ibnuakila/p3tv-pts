@@ -464,7 +464,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             $evaluasi = new Evaluasi();
             $periode = new Periode();
             $current_periode = $periode->getOpenPeriode();
-            var_dump($current_periode);
+            //var_dump($current_periode);
             $params = [];
             if ($this->input->post('export')) {
                 $params['paging'] = ['row' => 0, 'segment' => 0];
@@ -647,7 +647,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                 $this->form_validation->set_rules('idregistrasi', 'Registrasi', 'required|numeric');
                 $this->form_validation->set_rules('jns_evaluasi', 'Jenis Evaluasi', 'required|numeric');
                 $this->form_validation->set_rules('jns_file', 'Jenis Dokumen', 'required');
-                //$this->form_validation->set_rules('userfile', 'File', 'required');
+                $this->form_validation->set_rules('userfile', 'File', 'required');
 
                 $idregistrasi = $this->input->post('idregistrasi');
                 $jns_evaluasi = $this->input->post('jns_evaluasi');
@@ -832,7 +832,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                     $evaluasi->setLastUpdate(date("Y-m-d"));
                     $evaluasi->setIdStatusRegistrasi('');
                     $evaluasi->setIdJnsEvaluasi($jns_evaluasi);
-                    //$evaluasi->setFilePath( $fullPath );
+                    $evaluasi->setFilePath( $fullPath );
                     $isOk = $evaluasi->update();
 
                     $objNilai->delete();
@@ -1884,7 +1884,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             mkdir($file_path_excel, 0777, true);
         }
         $config ['upload_path'] = $file_path_excel;
-        $config ['allowed_types'] = 'doc|docx|pdf';
+        $config ['allowed_types'] = 'pdf';
         $config ['max_size'] = '2000';
 
         $this->load->library('upload', $config);
