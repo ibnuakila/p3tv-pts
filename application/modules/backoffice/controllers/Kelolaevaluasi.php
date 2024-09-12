@@ -71,6 +71,8 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                 $direktorat = 'vokasi';
             }
         }
+        $dokumen_presentasi = new DokumenPresentasi();
+        
         if ($proses->getTypeEvaluator() == '1') {//reviewer
             $sql = "SELECT * FROM dokumen_presentasi_baru " .
                     "WHERE bagian = '" . $direktorat . "' " .
@@ -93,16 +95,24 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
 
             $result = $this->db->query($sql);
         } else {
-            $sql = "SELECT * FROM dokumen_presentasi_baru " .
+            /*$sql = "SELECT * FROM dokumen_presentasi_baru " .
                     "WHERE bagian = '" . $direktorat . "' " .
                     "AND jns_usulan LIKE '%" . $jns_usulan . "%' " .
                     "AND aktor = 'Tim Teknis' " .
                     "AND periode = '" . $registrasi->getPeriode() . "'" .
-                    "AND id_jns_file IN('2','3','4','5') " .
+                    "AND id_jns_file IN('1','2','3','4','5') " .
                     "AND id_jns_file NOT IN (" .
                     "SELECT id_jns_file FROM rekapitulasi_berita_acara WHERE id_registrasi = '" . $registrasi->getIdRegistrasi() . "')";
 
-            $result = $this->db->query($sql);
+            $result = $this->db->query($sql);*/
+            
+            $params= [
+                'direktorat' => 'vokasi',
+                'jns_usulan' => $jns_usulan,
+                'periode' => $registrasi->getPeriode(),
+                'id_registrasi' => $registrasi->getIdRegistrasi()
+            ];
+            $result = $dokumen_presentasi->getDokumenTeknis($params);
         }
 
         $opt_dokumen = array('' => '-Pilih-');
@@ -312,10 +322,10 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             $id_registrasi = trim($this->input->post('id_registrasi'));
             $yayasan = trim($this->input->post('yayasan'));
             $pti = trim($this->input->post('pti'));
-            $periode = trim($this->input->post('periode'));
+            $opt_periode = trim($this->input->post('periode'));
             $evaluator = trim($this->input->post('evaluator'));
             $status_proses = trim($this->input->post('status_proses'));
-
+            
             $segment = $this->uri->segment(4, 0);
             $temp_post = $this->input->post(NULL, TRUE);
             if (!$temp_post) {
@@ -338,7 +348,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
 
             $evaluasi = new Evaluasi();
             $periode = new Periode();
-            if($opt_periode != ''){
+            if($opt_periode == ''){
                 $temp_current_periode = $periode->getOpenPeriode();
                 $current_periode = $temp_current_periode->periode;
             }else{
@@ -356,7 +366,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
             $params['join']['proses'] = ['INNER' => 'proses.id_proses=evaluasi_proses.id_proses'];
             $params['join']['proses_registrasi'] = ['INNER' => 'proses.id_proses=proses_registrasi.id_proses'];
             $params['join']['registrasi'] = ['INNER' => 'registrasi.id_registrasi=proses_registrasi.id_registrasi'];
-            $params['field']['registrasi.periode'] = ['=' => $current_periode];
+            //$params['field']['registrasi.periode'] = ['=' => $current_periode];
             if ($id_registrasi != '') {
                 $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
             }
@@ -375,7 +385,9 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                 $params['join']['evaluator'] = ["INNER" => "proses.id_evaluator = evaluator.id_evaluator"];
                 $params['field']['evaluator.nm_evaluator'] = ['LIKE' => $evaluator];
             }
-
+            if ($current_periode != '') {
+                $params['field'][Registrasi::table.'.periode'] = ['=' => $current_periode];
+            }
             if ($status_proses != '') {
                 $params['join']['status_proses'] = ["INNER" => "proses.id_status_proses = status_proses.id_status_proses"];
                 $params['field']['status_proses.id_status_proses'] = ['=' => $status_proses];
@@ -922,10 +934,10 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                 echo '</script>';
                 //return false;
             }
-        } else {
+        } else {//evaluasi kelayakan -----------------------------------------
             if ($data['jns_evaluasi'] == '2') {
                 echo 'jns evaluasi: 2..</br>';
-                // start transaction -------------------------------------------
+                // start transaction -----
                 $this->db->trans_begin();
                 echo 'transaction started..</br>';
                 // check
@@ -989,7 +1001,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                     echo 'evaluasi proses inserted..</br>';
                 }
 
-                if ($final == 1) {
+                /*if ($final == 1) {
                     // update status proses
                     $proses = new Proses();
                     $proses->getBy('id_proses', $data['id_proses']);
@@ -1006,7 +1018,7 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                     $rekapitulasi->setIdStatusRegistrasi($status);
                     $rekapitulasi->update();
                     echo 'rekapitulasi updated..</br>';
-                }
+                }*/
 
                 //update rekapitulasi berita acara -----------------------------
                 $temp_id = explode('_', $data['jns_file']);
@@ -1038,8 +1050,40 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
                 }
 
                 echo 'rekapitulasi berita acara inserted..</br>';
-
-                echo 'registrasi updated..</br>';
+                //check jika tidak ada lagi dokumen yg harus diupload
+                //update status rekapitulasi dan registrasi menjadi 10
+                $params= [
+                    'direktorat' => 'vokasi',
+                    'jns_usulan' => $this->objRegistrasi->getJnsUsulan(),
+                    'periode' => $this->objRegistrasi->getPeriode(),
+                    'id_registrasi' => $this->objRegistrasi->getIdRegistrasi()
+                ];
+                $res_dok_pres = $dokumen_presentasi->getDokumenTeknis($params);
+                if($res_dok_pres->num_rows()==0){
+                    //update rekapitulasi menjadi 10 (unggah proposal perbaikan)
+                    $rekapitulasi->getBy('id_registrasi', $this->objRegistrasi->getIdRegistrasi());
+                    $rekapitulasi->setIdStatusRegistrasi(10);
+                    $rekapitulasi->setPublish('yes');
+                    $rekapitulasi->update();
+                    
+                    //update registrasi juga
+                    $curr_status = $this->objRegistrasi->getIdStatusRegistrasi();
+                    if($curr_status != 10 || $curr_status != 11 || $curr_status != 7){
+                        $this->objRegistrasi->setIdStatusRegistrasi(10);
+                        $revision = $this->objRegistrasi->getRevisiProposal();
+                        $this->objRegistrasi->setRevisiProposal($revision + 1);
+                        $this->objRegistrasi->update();
+                    }
+                    echo 'registrasi updated..</br>';
+                    
+                    // update status proses
+                    $proses = new Proses();
+                    $proses->getBy('id_proses', $data['id_proses']);
+                    $proses->setIdEvaluator($user->getIdEvaluator());
+                    $proses->setTglTerima(date('Y-m-d'));
+                    $proses->setIdStatusProses('3'); //selesai
+                    //$proses->update(); jangan update dulu karena ada input luaran
+                }
 
                 if ($this->db->trans_status() === FALSE) {
                     $this->db->trans_rollback();
@@ -1783,9 +1827,9 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
         $this->load->model('dokumenregistrasi');
         $this->load->helper('download');
         $id_registrasi = $this->uri->segment(4);
-        $id_form = $this->uri->segment(5);
-        $params['id_form'] = $id_form;
-        $params['id_registrasi'] = $id_registrasi;
+        $id_upload = $this->uri->segment(5);
+        $params['id_upload'] = $id_upload;
+        //$params['id_registrasi'] = $id_registrasi;
         $dokumen_registrasi = new DokumenPerbaikanUpload($params);
         //$res_dok_reg = $dokumen_registrasi->getByRelated('registrasi', 'id_registrasi', '191120143718', '0', '0');
         if ($dokumen_registrasi->getFilePath() != '') {
@@ -1894,13 +1938,13 @@ class KelolaEvaluasi extends MX_Controller implements IControll {
         if (!$this->upload->do_upload()) { // upload excell penilaian
             $error = trim(strip_tags($this->upload->display_errors()));
             echo '<script>';
-            echo 'alert("Error File Excell Penilaian. ' . $error . '");';
+            echo 'alert("Error File Coco. ' . $error . '");';
             echo 'window.history.back(1);';
             echo '</script>';
         } else {
             echo 'file excel uploaded..</br>';
             $data = $this->upload->data();
-
+            echo 'path: '.$data['full_path'];
             $rekap = new Rekapitulasi();
             $rekap->getBy('id_registrasi', $idregistrasi);
             $rekap->setKeterangan($data['full_path']);

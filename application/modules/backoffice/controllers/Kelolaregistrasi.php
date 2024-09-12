@@ -36,6 +36,7 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
         $this->load->model('Laporanakhiriku');
         $this->load->model('Laporanakhirdanapendamping');
         $this->load->model('Laporanakhirpemanfaatan');
+        $this->load->model('Rekapitulasi');
     }
 
     function __destruct() {

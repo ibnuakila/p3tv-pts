@@ -7,6 +7,10 @@ require 'vendor/autoload.php';
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\Element\Field;
+use PhpOffice\PhpWord\Element\Table;
+use PhpOffice\PhpWord\Element\TextRun;
+use PhpOffice\PhpWord\SimpleType\TblWidth;
 
 //require_once APPPATH . 'third_party/PhpWord/TemplateProcessor.php';
 /**
@@ -41,6 +45,8 @@ class KelolaProses extends MX_Controller implements IControll {
         $this->load->model('Jenisevaluasi');
         $this->load->model('Laporankemajuan');
         $this->load->model('Danapendamping');
+        $this->load->model('Rekapitulasi');
+        $this->load->model('Luaranprogram');
         $this->load->helper('download');
     }
 
@@ -250,10 +256,10 @@ class KelolaProses extends MX_Controller implements IControll {
         $periode = new Periode();
         //$current_periode = $periode->getOpenPeriode();
         $temp_current_periode = $periode->getOpenPeriode();
-            
-        if($opt_periode == ''){                
+
+        if ($opt_periode == '') {
             $current_periode = $temp_current_periode->periode;
-        }else{
+        } else {
             $current_periode = $opt_periode;
         }
         $params = [];
@@ -278,7 +284,7 @@ class KelolaProses extends MX_Controller implements IControll {
             $params['join']['tbl_pti'] = ['INNER' => 'registrasi.kdpti = tbl_pti.kdpti'];
             $params['field']['tbl_pti.nmpti'] = ['LIKE' => $pti];
         }
-        if ($current_periode != '') {            
+        if ($current_periode != '') {
             $params['field']['registrasi.periode'] = ['=' => $current_periode];
         }
         if ($evaluator != '') {
@@ -374,16 +380,16 @@ class KelolaProses extends MX_Controller implements IControll {
         $params['join']['proses_registrasi'] = ['INNER' => $table . '.id_proses=proses_registrasi.id_proses'];
         $params['join']['registrasi'] = ['INNER' => 'registrasi.id_registrasi=proses_registrasi.id_registrasi'];
         //$params['field']['registrasi.periode'] = ['=' => $current_periode[0]];
-        if($opt_periode == ''){                
+        if ($opt_periode == '') {
             $current_periode = $temp_current_periode->periode;
-        }else{
+        } else {
             $current_periode = $opt_periode;
         }
         $params['field']['proses.id_evaluator'] = ['=' => $user->getIdEvaluator()];
         $params['field'][$table . '.id_status_proses'] = ['IN' => [1, 2, 4]];
         if ($current_periode != '') {
-                $params['field']['registrasi.periode'] = ['=' => $current_periode];
-            }
+            $params['field']['registrasi.periode'] = ['=' => $current_periode];
+        }
 
         if ($id_registrasi != '') {
             $params['field']['registrasi.id_registrasi'] = ['=' => $id_registrasi];
@@ -574,26 +580,31 @@ class KelolaProses extends MX_Controller implements IControll {
         $jns_usulan = $registrasi->getJnsUsulan();
 
         $dokumen_template = '';
-        $qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
-        $res_query = $this->db->query($qry);
-        if ($res_query->num_rows() > 0) {
-            $row = $res_query->row();
-            /* if($row->nama_direktorat=='Akademik'){
-              if($jns_usulan=='01' || $jns_usulan=='03'){//barang
-              $dokumen_template = './assets/documents/akademik/Format_Berita_Acara_Hasil_Final_Barang_dan_Gedung.docx';
-              }elseif($jns_usulan=='02'){//gedung
-              $dokumen_template = './assets/documents/akademik/Format_Berita_Acara_Hasil_Final_Gedung.docx';
-              }
-              }else{ */
+        //$qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
+        //$res_query = $this->db->query($qry);
+        //if ($res_query->num_rows() > 0) {
+        //$row = $res_query->row();
+        /* if($row->nama_direktorat=='Akademik'){
+          if($jns_usulan=='01' || $jns_usulan=='03'){//barang
+          $dokumen_template = './assets/documents/akademik/Format_Berita_Acara_Hasil_Final_Barang_dan_Gedung.docx';
+          }elseif($jns_usulan=='02'){//gedung
+          $dokumen_template = './assets/documents/akademik/Format_Berita_Acara_Hasil_Final_Gedung.docx';
+          }
+          }else{ */
+
+        //}
+        //}
+        $periode = new Periode();
+        $current_periode = $periode->getOpenPeriode();
+        if ($current_periode->periode >= '20241') {
+            $dokumen_template = './assets/documents/vokasi/BA-P3TV-PTS-2024 V2.docx';
+        } else {
             if ($jns_usulan == '01' || $jns_usulan == '03') {//barang
                 $dokumen_template = './assets/documents/vokasi/Format Berita Acara Finalisasi Program dan Anggaran 2023.docx';
             } elseif ($jns_usulan == '02') {//gedung
                 $dokumen_template = './assets/documents/vokasi/Format_Berita_Acara_Hasil_Final_Gedung.docx';
             }
-
-            //}
         }
-
         if (is_file($dokumen_template)) {
             $templateProcessor = new TemplateProcessor($dokumen_template);
         } else {
@@ -606,17 +617,25 @@ class KelolaProses extends MX_Controller implements IControll {
         $periode = $registrasi->getPeriode();
         //$prodi = new Prodi();
         $nama_pt = str_replace('&', 'Dan', $pti->getNmPti());
-        $reviewer = '';
+        $reviewer_1 = ''; $reviewer_2 = '';
         $t_teknis = '';
         $result_proses = $registrasi->getProses2();
-        foreach ($result_proses as $obj) {
-            if ($obj->getTypeEvaluator() == '1') {
-                $evaluator = $obj->getEvaluator();
-                $reviewer = $evaluator->getNmEvaluator();
-            } elseif ($obj->getTypeEvaluator() == '2') {
-                $evaluator = $obj->getEvaluator();
+        //var_dump($result_proses->result());
+        $r=0;
+        foreach ($result_proses->result() as $row) {
+            if ($row->type_evaluator == '1') {
+                $evaluator = new Evaluator($row->id_evaluator);
+                if($reviewer_1 == ''){
+                    $reviewer_1 = $evaluator->getNmEvaluator();
+                }else{
+                    $reviewer_2 = $evaluator->getNmEvaluator();
+                }
+                
+            } elseif ($row->type_evaluator == '2') {
+                $evaluator = new Evaluator($row->id_evaluator);
                 $t_teknis = $evaluator->getNmEvaluator();
             }
+            $r++;
         }
         $lab_ipa = 0;
         $lab_kes = 0;
@@ -624,6 +643,7 @@ class KelolaProses extends MX_Controller implements IControll {
         $lab_micro = 0;
         $lab_bahasa = 0;
         $alat_ti = 0;
+        $kitchen = 0;
         $kelas = 0;
         $laboratorium = 0;
         $total = 0;
@@ -647,7 +667,7 @@ class KelolaProses extends MX_Controller implements IControll {
                             tbl_item_hibah a
                     JOIN tbl_item_barang b ON a.id_item = b.id_item
                     WHERE
-                            id_registrasi = '" . $id_registrasi . "' AND periode='".$periode."'
+                            id_registrasi = '" . $id_registrasi . "' AND periode='" . $periode . "'
                     GROUP BY
                             LEFT (a.id_item, 6)
             ) AS a ON ti.kd_sub2_kategori = LEFT (a.kd_barang, 6)
@@ -659,11 +679,6 @@ class KelolaProses extends MX_Controller implements IControll {
             //print_r($result->result());
             foreach ($result->result() as $row) {
 
-
-                //     013301	Laboratorium Teknologi Informasi dan Desain Komunikasi
-//013101	Laboratorium IPA Dasar
-// 013201	Laboratorium Kesehatan Dasar
-// 013401	Laboratorium Teknik Dasar
                 if ($row->kd_sub2_kategori == '013301') {
                     //$ppn = ($row->jumlah_biaya * 10) / 100;
                     $lab_teknik = $row->jumlah_biaya; //+ $ppn;
@@ -696,6 +711,9 @@ class KelolaProses extends MX_Controller implements IControll {
                     //$ppn = ($row->jumlah_biaya * 10) / 100;
                     $laboratorium = $row->jumlah_biaya;
                 }
+                if ($row->kd_sub2_kategori == '013501') {
+                    $kitchen = $row->jumlah_biaya;
+                }
             }
 
             //$ppn = ($total * 10)/100;
@@ -707,12 +725,14 @@ class KelolaProses extends MX_Controller implements IControll {
             $templateProcessor->setValue('lab_micro', number_format($lab_micro, 2));
             $templateProcessor->setValue('lab_bahasa', number_format($lab_bahasa, 2));
             $templateProcessor->setValue('alat_ti', number_format($alat_ti, 2));
+            $templateProcessor->setValue('kitchen', number_format($kitchen, 2));
             $templateProcessor->setValue('kelas', number_format($kelas, 2));
             $templateProcessor->setValue('laboratorium', number_format($laboratorium, 2));
 
             $templateProcessor->setValue('yys', $nama_yys);
             $templateProcessor->setValue('pt', $nama_pt);
-            $templateProcessor->setValue('reviewer', $reviewer);
+            $templateProcessor->setValue('reviewer_1', $reviewer_1);
+            $templateProcessor->setValue('reviewer_2', $reviewer_2);
             $templateProcessor->setValue('t_teknis', $t_teknis);
 
             //date_default_timezone_set("Asia/Bangkok");
@@ -739,9 +759,91 @@ class KelolaProses extends MX_Controller implements IControll {
                 $templateProcessor->setValue('laboratorium', number_format($laboratorium, 2));
                 //$templateProcessor->setValue('total', $total);
             }
-            $total = ($lab_ipa + $lab_kes + $lab_teknik + $lab_micro + $lab_bahasa + $alat_ti + $kelas + $laboratorium);
+            $total = ($lab_ipa + $lab_kes + $lab_teknik + 
+                    $lab_micro + $lab_bahasa + $alat_ti + 
+                    $kelas + $laboratorium + $kitchen);
             $total_ppn = number_format($total, 2);
             $templateProcessor->setValue('total', $total_ppn);
+            
+            //output table luaran
+            $luaran = new LuaranProgram();
+            $params['paging'] = ['row' => 0, 'segment' => 0];
+            $params['field'][LuaranProgram::table.'.id_registrasi'] = ['=' => $id_registrasi];
+            $result = $luaran->getResult($params);
+            $table = new Table(['borderSize' => 5, 'borderColor' => 'blue', 'unit' => TblWidth::AUTO]);
+            if($result->num_rows()>0){
+                //$table = new Table(['borderSize' => 5, 'borderColor' => 'blue', 'unit' => TblWidth::AUTO]);
+                $table->addRow();
+                
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Nama Prodi', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Ruang Lingkup', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Program Pengembangan', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Bentuk Luaran', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Jumlah Luaran', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Tahun Luaran', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Waktu Pelaksanaan', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Biaya', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Target IKU', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Keterangan', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $total = 0;
+                foreach ($result->result() as $row) {
+                    $table->addRow();
+                    $table->addCell()->addText($row->nama_prodi);
+                    $table->addCell()->addText($row->ruang_lingkup);
+                    $table->addCell()->addText($row->program_pengembangan);
+                    $table->addCell()->addText($row->bentuk_luaran);
+                    $table->addCell()->addText($row->jumlah_luaran);
+                    $table->addCell()->addText($row->tahun);
+                    $table->addCell()->addText($row->waktu_pelaksanaan);
+                    $table->addCell()->addText(number_format($row->biaya,2), ['bold'=>true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::RIGHT]);
+                    $table->addCell()->addText($row->target_iku);
+                    $table->addCell()->addText($row->keterangan);
+                    $total = $total + $row->biaya;
+                }
+                $table->addRow();
+                $table->addCell(null, ['gridSpan' => 7, 'valign' => 'center'])
+                        ->addText('Total (Rupiah):', ['bold'=>true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::LEFT]);
+                $table->addCell()->addText(number_format($total, 2), ['bold'=>true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::RIGHT]);
+                $table->addCell();
+                $table->addCell();
+                
+            }else{
+                
+                $table->addRow();
+                
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Nama Prodi', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Ruang Lingkup', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Program Pengembangan', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Bentuk Luaran', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Jumlah Luaran', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Tahun Luaran', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Waktu Pelaksanaan', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Biaya', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Target IKU', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addCell(null, ['bgColor' => '#B4C6E7', 'valign' => 'center'])->addText('Keterangan', ['bold' => true], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+                $table->addRow();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+                $table->addCell();
+            }
+            /*$title = new TextRun();
+            $title->addText('This title has been set ', ['bold' => true, 'italic' => true, 'color' => 'blue']);
+            $title->addText('dynamically', ['bold' => true, 'italic' => true, 'color' => 'red', 'underline' => 'single']);
+            $templateProcessor->setComplexBlock('title', $title);
+
+            $inline = new TextRun();
+            $inline->addText('by a red italic text', ['italic' => true, 'color' => 'red']);
+            $templateProcessor->setComplexValue('inline', $inline);*/
+            $templateProcessor->setComplexBlock('table', $table);
+            
+            
         } elseif ($jns_usulan == '02') {
             $qry = "SELECT a.id_item,SUM(a.subtotal) AS jumlah_biaya 
             FROM tbl_item_hibah a
@@ -982,20 +1084,27 @@ class KelolaProses extends MX_Controller implements IControll {
         $registrasi = new Registrasi($id_registrasi);
         $pt = $registrasi->getPti();
         $dokumen_template = '';
-        $qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
-        $res_query = $this->db->query($qry);
-        if ($res_query->num_rows() > 0) {
-            $row = $res_query->row();
-            if ($row->nama_direktorat == 'Akademik') {
-                //$dokumen_template = realpath(APPPATH . '../assets/documents/akademik/Format_Pakta_Kesepakatan_Pengadaan_Barang_PP-PTS_2020.docx');
-            } else {
-                $dokumen_template = realpath(APPPATH . '../assets/documents/vokasi/Format Pakta Kesepakatan Pengadaan Barang PPPTV-PTS 2023.docx');
-                //$dokumen_template = realpath(APPPATH . '../assets/documents/vokasi/Format_Pakta_Kesepakatan_Pengadaan_Barang_PPPTV-PTS_2021.docx');
-            }
+        //$qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
+        //$res_query = $this->db->query($qry);
+        /* if ($res_query->num_rows() > 0) {
+          $row = $res_query->row();
+          if ($row->nama_direktorat == 'Akademik') {
+          //$dokumen_template = realpath(APPPATH . '../assets/documents/akademik/Format_Pakta_Kesepakatan_Pengadaan_Barang_PP-PTS_2020.docx');
+          } else {
+          $dokumen_template = realpath(APPPATH . '../assets/documents/vokasi/Format Pakta Kesepakatan Pengadaan Barang PPPTV-PTS 2023.docx');
+          //$dokumen_template = realpath(APPPATH . '../assets/documents/vokasi/Format_Pakta_Kesepakatan_Pengadaan_Barang_PPPTV-PTS_2021.docx');
+          }
+
+          } */
+        $periode = new Periode();
+        $current_periode = $periode->getOpenPeriode();
+        if ($current_periode->periode >= '20241') {
+            $dokumen_template = realpath(APPPATH . '../assets/documents/vokasi/Format Pakta Kesepakatan Pengadaan Barang PPPTV-PTS 2024.docx');
+        } else {
+            $dokumen_template = realpath(APPPATH . '../assets/documents/vokasi/Format Pakta Kesepakatan Pengadaan Barang PPPTV-PTS 2023.docx');
         }
-
         $name = $registrasi->getIdRegistrasi() . '_' . str_replace(' ', '_', $pt->getNmPti()) . '_pakta_kesepakatan' . '.docx';
-
+        $nama_pt = str_replace('&', 'Dan', $pt->getNmPti());
         if (is_file($dokumen_template)) {
             $templateProcessor = new TemplateProcessor($dokumen_template);
             $this->db->select('*');
@@ -1009,16 +1118,17 @@ class KelolaProses extends MX_Controller implements IControll {
             } else {
                 $templateProcessor->setValue('noSurat', '-');
             }
-        $lab_ipa = 0;
-        $lab_kes = 0;
-        $lab_teknik = 0;
-        $lab_micro = 0;
-        $lab_bahasa = 0;
-        $alat_ti = 0;
-        $kelas = 0;
-        $laboratorium = 0;
-        $total = 0;
-        //if ($jns_usulan == '01' || $jns_usulan == '03') {//barang
+            $lab_ipa = 0;
+            $lab_kes = 0;
+            $lab_teknik = 0;
+            $lab_micro = 0;
+            $lab_bahasa = 0;
+            $alat_ti = 0;
+            $kitchen = 0;
+            $kelas = 0;
+            $laboratorium = 0;
+            $total = 0;
+            //if ($jns_usulan == '01' || $jns_usulan == '03') {//barang
             $query = "SELECT
             ti.kd_sub2_kategori,ti.nm_sub2_kategori,
             IF (harga_satuan > 1, '1', '-') AS paket,
@@ -1038,7 +1148,7 @@ class KelolaProses extends MX_Controller implements IControll {
                             tbl_item_hibah a
                     JOIN tbl_item_barang b ON a.id_item = b.id_item
                     WHERE
-                            id_registrasi = '" . $id_registrasi . "' AND periode='".$registrasi->getPeriode()."'
+                            id_registrasi = '" . $id_registrasi . "' AND periode='" . $registrasi->getPeriode() . "'
                     GROUP BY
                             LEFT (a.id_item, 6)
             ) AS a ON ti.kd_sub2_kategori = LEFT (a.kd_barang, 6)
@@ -1087,6 +1197,9 @@ class KelolaProses extends MX_Controller implements IControll {
                     //$ppn = ($row->jumlah_biaya * 10) / 100;
                     $laboratorium = $row->jumlah_biaya;
                 }
+                if ($row->kd_sub2_kategori == '013501') {
+                    $kitchen = $row->jumlah_biaya;
+                }
             }
 
             //$ppn = ($total * 10)/100;
@@ -1098,16 +1211,17 @@ class KelolaProses extends MX_Controller implements IControll {
             $templateProcessor->setValue('lab_micro', number_format($lab_micro, 2));
             $templateProcessor->setValue('lab_bahasa', number_format($lab_bahasa, 2));
             $templateProcessor->setValue('alat_ti', number_format($alat_ti, 2));
+            $templateProcessor->setValue('kitchen', number_format($kitchen, 2));
             $templateProcessor->setValue('kelas', number_format($kelas, 2));
             //$templateProcessor->setValue('laboratorium', number_format($laboratorium, 2));
-            $total = ($lab_ipa + $lab_kes + $lab_teknik + $lab_micro + $lab_bahasa + $alat_ti + $kelas + $laboratorium);
+            $total = ($lab_ipa + $lab_kes + $lab_teknik + $lab_micro + $lab_bahasa + $alat_ti + $kelas + $laboratorium + $kitchen);
             $total_ppn = number_format($total, 2);
             $templateProcessor->setValue('total', $total_ppn);
             //$templateProcessor->setValue('yys', $nama_yys);
-            //$templateProcessor->setValue('pt', $nama_pt);
+            //$templateProcessor->setValue('nmpti', $nama_pt);
             //$templateProcessor->setValue('reviewer', $reviewer);
             //$templateProcessor->setValue('t_teknis', $t_teknis);
-            
+
             header('Content-Type: application/msword');
             header('Content-Disposition: attachment;filename="' . $name . '"');
             header('Cache-Control: max-age=0');
@@ -1121,19 +1235,25 @@ class KelolaProses extends MX_Controller implements IControll {
     }
 
     public function getSuratTugas() {
-        $qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
-        $res_query = $this->db->query($qry);
-        $filepath = '';
-        if ($res_query->num_rows() > 0) {
-            $row = $res_query->row();
-            /* if($row->nama_direktorat=='Akademik'){
-              $filepath = realpath(APPPATH . '../assets/documents/Format_Surat_Tugas_Penerimaan_Barang_2020.docx');
-              }else{ */
+        //$qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
+        //$res_query = $this->db->query($qry);
+        //$filepath = '';
+        //if ($res_query->num_rows() > 0) {
+        //$row = $res_query->row();
+        /* if($row->nama_direktorat=='Akademik'){
+          $filepath = realpath(APPPATH . '../assets/documents/Format_Surat_Tugas_Penerimaan_Barang_2020.docx');
+          }else{
+          $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format Surat Tugas Penerimaan Barang PPPTV-PTS 2023.docx');
+
+          //}
+          } */
+        $periode = new Periode();
+        $current_periode = $periode->getOpenPeriode();
+        if ($current_periode->periode >= '20241') {
+            $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format Surat Tugas Penerimaan Barang PPPTV-PTS 2024.docx');
+        } else {
             $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format Surat Tugas Penerimaan Barang PPPTV-PTS 2023.docx');
-
-            //}
         }
-
         $id_registrasi = $this->uri->segment(4);
         $registrasi = new Registrasi($id_registrasi);
         $pt = $registrasi->getPti();
@@ -1152,18 +1272,25 @@ class KelolaProses extends MX_Controller implements IControll {
     }
 
     public function getPernyataanPersetujuan() {
-        $qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
-        $res_query = $this->db->query($qry);
-        $filepath = '';
-        if ($res_query->num_rows() > 0) {
-            $row = $res_query->row();
-            /* if($row->nama_direktorat=='Akademik'){
-              $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format_Pernyataan_Persetujuan.docx');
-              }else{ */
-            $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format Surat Kesediaan Penerimaan Bantuan PPPTV-PTS 2023.docx');
-            //}
-        }
+        //$qry = "SELECT * FROM tbl_direktorat_aktif WHERE status='Aktif'";
+        //$res_query = $this->db->query($qry);
+        //$filepath = '';
+        /* if ($res_query->num_rows() > 0) {
+          $row = $res_query->row();
+          /* if($row->nama_direktorat=='Akademik'){
+          $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format_Pernyataan_Persetujuan.docx');
+          }else{
+          $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format Surat Kesediaan Penerimaan Bantuan PPPTV-PTS 2023.docx');
+          //}
+          } */
+        $periode = new Periode();
+        $current_periode = $periode->getOpenPeriode();
 
+        if ($current_periode->periode >= '20241') {
+            $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format Surat Kesediaan Penerimaan Bantuan PPPTV-PTS 2024.docx');
+        } else {
+            $filepath = realpath(APPPATH . '../assets/documents/vokasi/Format Surat Kesediaan Penerimaan Bantuan PPPTV-PTS 2023.docx');
+        }
         $id_registrasi = $this->uri->segment(4);
         $registrasi = new Registrasi($id_registrasi);
         $pt = $registrasi->getPti();
@@ -1180,10 +1307,9 @@ class KelolaProses extends MX_Controller implements IControll {
             echo '</script>';
         }
     }
-    
-    public function getBapMonev()
-    {       
-        
+
+    public function getBapMonev() {
+
         $filepath = realpath(APPPATH . '../assets/documents/vokasi/Berita_Acara_monev_P3TVTS_2023.docx');
 
         $id_registrasi = $this->uri->segment(4);
@@ -1202,7 +1328,6 @@ class KelolaProses extends MX_Controller implements IControll {
             echo '</script>';
         }
     }
-
 }
 
 ?>

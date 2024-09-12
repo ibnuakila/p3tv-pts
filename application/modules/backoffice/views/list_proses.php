@@ -1,11 +1,11 @@
 
 <script type="text/javascript" >
-    
+
 </script>
 
 
-<h2 class="page-header"><?=$title?></h2>
-<p><?php $this->uri->segment(3)?></p>
+<h2 class="page-header"><?= $title ?></h2>
+<p><?php $this->uri->segment(3) ?></p>
 <div class="card">
     <div class="card-header text-justify">
 
@@ -40,7 +40,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
+                        <th><?= form_dropdown('status_proses', $status_proses, '', 'class="form-control form-control-sm"') ?></th>
 
                         <th>
                             <button type="submit" name="find" class="btn btn-primary btn-sm" value="find">
@@ -119,136 +119,170 @@
                                     </td>          
                                     <td>
                                         <?php
-                                        if ($this->sessionutility->isAdministrator()) {
+                                        if ($this->sessionutility->isAdministrator()) {//menu khusus admin yg ditugaskan evaluasi
                                             ?>
-                                                          <!--<a href="<?= base_url() . 'backoffice/kelolaevaluasi/view/' . $reg->getIdRegistrasi() ?>" title="View">
-                                                            <i class="fa fa-file"></i> </a>-->
+                                                                  <!--<a href="<?= base_url() . 'backoffice/kelolaevaluasi/view/' . $reg->getIdRegistrasi() ?>" title="View">
+                                                                    <i class="fa fa-file"></i> </a>-->
 
                                             <?php
                                             //if($jml_segment)
                                             if ($this->uri->segment(3) == 'indexevaluator') {
-                                                if ($obj->type_evaluator == '1') {//reviewer
+                                                if ($obj->type_evaluator == '1') {//admin sebagai reviewer
                                                     ?>
-                            
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getberitaacarafinal/' . $reg->getIdRegistrasi() ?>" 
+
+                                                    <!--<a href="<?= base_url() . 'backoffice/kelolaproses/getberitaacarafinal/' . $reg->getIdRegistrasi() ?>" 
                                                        title="Berita Acara Final" target="_new">
                                                         <i class="fa fa-file-text-o"></i>
-                                                    </a>
+                                                    </a>-->
 
                                                     <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>" title="Daftar Dokumen">
                                                         <i class="fa fa-list-alt"></i> </a>
                                                     <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah File">
                                                         <i class="fa fa-upload"></i> </a>
                                                     <?php
-                                                } else {//tim teknis
+                                                } else {//admin sebagai tim teknis
                                                     ?>
-                                                    <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Data Barang" target="_new">                        
-                                                        <i class="fa fa-shopping-cart"></i> </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getpernyataanpersetujuan/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Format Kesediaan Penerimaan Bantuan" target="_new">
-                                                        <i class="fa fa-file-word"></i>
-                                                    </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getpaktakesepakatan/' . $reg->getIdRegistrasi()  ?>" 
-                                                       title="Format Pakta Kesepakatan" target="_new">
-                                                        <i class="fa fa-file-word"></i>
-                                                    </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getsurattugas/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Format Surat Tugas Penerimaan Barang" target="_new">
-                                                        <i class="fa fa-file-word"></i>
-                                                    </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>" title="Daftar Dokumen">
-                                                        <i class="fa fa-list-alt"></i> </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah File">
-                                                        <i class="fa fa-upload"></i> </a>
+                                                    <div class="btn-group card-option">
+                                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="feather icon-more-horizontal"></i>
+                                                        </button>
+                                                        <ul class="list-unstyled card-option dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(12px, 28px, 0px);">
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-list-alt"></i> Dokumen</a>
+                                                            </li>
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-cubes"></i> Data Barang</a>
+                                                            </li>
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaluaran/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>"><i class="fa fa-level-up-alt"></i> Data Luaran</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getberitaacarafinal/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-file-word"></i> Berita Acara Final</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getpernyataanpersetujuan/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-file-word"></i> Surat Kesediaan Menerima Bantuan</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getpaktakesepakatan/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-file-word"></i> Pakta Kesepakatan</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getsurattugas/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-file-word"></i> Surat Tugas Menerima Barang</a>
+                                                            </li>
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>"><i class="fa fa-upload"></i> Unggah</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                     <?php
                                                 }
                                             } else {
                                                 ?>
                                                 <a href="<?= base_url() . 'backoffice/kelolapenugasan/edit/' . $pro->getIdProses() ?>" title="Edit">
                                                     <i class="fa fa-edit"></i> </a>
-                                            <?php
+                                                <?php
                                             }
-                                        } else {
+                                        } else {//end user -------------------------------------------
                                             if ($obj->id_jns_evaluasi == '1') {
-                                                //echo 'status: '.$status;
-                                                //if ($obj->id_status_proses == '1') {
                                                 ?>
-                                                    <!--<a href="<?= base_url() . 'backoffice/kelolaproses/accept/' . $obj->id_proses ?>" title="Terima">
-                                                        <i class="fa fa-check"></i> </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/reject/' . $obj->id_proses ?>" title="Tolak">
-                                                        <i class="fa fa-remove"></i> </a>-->
-                <?php //} else {
-                ?>
-                                                <a href="<?= base_url() . 'backoffice/kelolaproses/downloadinstrument/' . $obj->id_proses ?>" title="Download Instrument">
-                                                    <i class="fa fa-download"></i> </a>
-                                                <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>" title="Daftar Dokumen">
-                                                    <i class="fa fa-list-alt"></i> </a>
-                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah Hasil">
-                                                    <i class="fa fa-upload"></i> </a>
-                                                <?php
-                                                if ($obj->type_evaluator == '1') {//reviewer ---------
-                                                    ?>
-                                                <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Data Barang" target="_new">                        
-                                                        <i class="fa fa-shopping-cart"></i> </a>
-                                                <?php
-                                                }
-                                                ?>
+                                                    <div class="btn-group card-option">
+                                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="feather icon-more-horizontal"></i>
+                                                        </button>
+                                                        <ul class="list-unstyled card-option dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(12px, 28px, 0px);">
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-list-alt"></i> Dokumen</a>
+                                                            </li>
+
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/downloadinstrument/' . $obj->id_proses ?>"><i class="fa fa-file-word"></i> Download Instrument Penilaian</a>
+                                                            </li>
+
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>"><i class="fa fa-upload"></i> Unggah</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                
 
                                                 <?php
-                                            } elseif($obj->id_jns_evaluasi == '2') {
+                                            } elseif ($obj->id_jns_evaluasi == '2') {
                                                 if ($obj->type_evaluator == '1') {//reviewer ---------
                                                     ?>
-                                                                        <!--<a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>" 
-                                                                           title="Data Barang" target="_new">                        
-                                                                            <i class="fa fa-share"></i> </a>
-                                                                        <a href="<?= base_url() . 'backoffice/kelolaproses/getdraftberitaacara/' . $reg->getIdRegistrasi() ?>" 
-                                                                           title="Draft Berita Acara" target="_new">
-                                                                            <i class="fa fa-file-text"></i>
-                                                                        </a>-->
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getberitaacarafinal/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Berita Acara Final" target="_new">
-                                                        <i class="fa fa-file-word"></i>
-                                                    </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>" title="Daftar Dokumen">
-                                                        <i class="fa fa-list-alt"></i> </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah File">
-                                                        <i class="fa fa-upload"></i> </a>
+                                                    
+                                                    <div class="btn-group card-option">
+                                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="feather icon-more-horizontal"></i>
+                                                        </button>
+                                                        <ul class="list-unstyled card-option dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(12px, 28px, 0px);">
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-list-alt"></i> Dokumen</a>
+                                                            </li>
+                                                            <!--
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getberitaacarafinal/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-file-word"></i> Berita Acara</a>
+                                                            </li>
+                                                            
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>"><i class="fa fa-shopping-cart"></i> Data Barang</a>
+                                                            </li>-->
+                                                        </ul>
+                                                    </div>
                                                     <?php
                                                 } else {//tim teknis ------------------------------
                                                     ?>
-                                                    <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Data Barang" target="_new">                        
-                                                        <i class="fa fa-shopping-cart"></i> </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getpernyataanpersetujuan/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Format Kesediaan Penerimaan Bantuan" target="_new">
-                                                        <i class="fa fa-file-word"></i>
-                                                    </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getpaktakesepakatan/' . $reg->getIdRegistrasi()  ?>" 
-                                                       title="Format Pakta Kesepakatan" target="_new">
-                                                        <i class="fa fa-file-word"></i>
-                                                    </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getsurattugas/' . $reg->getIdRegistrasi() ?>" 
-                                                       title="Format Surat Tugas Penerimaan Barang" target="_new">
-                                                        <i class="fa fa-file-word"></i>
-                                                    </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>" title="Daftar Dokumen">
-                                                        <i class="fa fa-list-alt"></i> </a>
-                                                    <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah File">
-                                                        <i class="fa fa-upload"></i> </a>
+
+                                                    <div class="btn-group card-option">
+                                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="feather icon-more-horizontal"></i>
+                                                        </button>
+                                                        <ul class="list-unstyled card-option dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(12px, 28px, 0px);">
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>">
+                                                                    <i class="fa fa-list-alt"></i> Dokumen</a>
+                                                            </li>
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolabarang/index/' . $reg->getIdRegistrasi() ?>">
+                                                                    <i class="fa fa-cubes"></i> Data Barang</a>
+                                                            </li>
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaluaran/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>">
+                                                                    <i class="fa fa-level-up-alt"></i> Data Luaran</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getberitaacarafinal/' . $reg->getIdRegistrasi() ?>">
+                                                                    <i class="fa fa-file-word"></i> Berita Acara Final</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getpernyataanpersetujuan/' . $reg->getIdRegistrasi() ?>">
+                                                                    <i class="fa fa-file-word"></i> Surat Kesediaan Menerima Bantuan</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getpaktakesepakatan/' . $reg->getIdRegistrasi() ?>">
+                                                                    <i class="fa fa-file-word"></i> Pakta Kesepakatan</a>
+                                                            </li>
+                                                            <li class="dropdown-item reload-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/getsurattugas/' . $reg->getIdRegistrasi() ?>">
+                                                                    <i class="fa fa-file-word"></i> Surat Tugas Menerima Barang</a>
+                                                            </li>
+                                                            <li class="dropdown-item full-card">
+                                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>">
+                                                                    <i class="fa fa-upload"></i> Unggah</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
                                                     <?php
                                                 }
-                                            }elseif($obj->id_jns_evaluasi == '3'){?>
+                                            } elseif ($obj->id_jns_evaluasi == '3') {
+                                                ?>
                                                 <a href="<?= base_url() . 'backoffice/kelolaregistrasi/detail/' . $reg->getIdRegistrasi() ?>" title="Detail Usulan">
                                                     <i class="fa fa-eye"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolapaket/getform/' . $reg->getIdRegistrasi() ?>" title="Lampiran BAP">
-                                                        <i class="fa fa-list-alt"></i> </a>
+                                                    <i class="fa fa-list-alt"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolaproses/getbapmonev/' . $reg->getIdRegistrasi() ?>" title="Template BAP">
-                                                        <i class="fa fa-list"></i> </a>
+                                                    <i class="fa fa-list"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolaevaluasi/addbapmonev/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Upload BAP">
-                                                        <i class="fa fa-upload"></i> </a>
-                                        <?php
+                                                    <i class="fa fa-upload"></i> </a>
+                                                <?php
                                             }
                                         }
                                         ?>

@@ -131,9 +131,9 @@
                                     <td>
                                             <?php 
                                             if($eva->getRange() == 'green'){
-                                                echo '<span class="badge badge-success">'.$skor.'</span>'; 
+                                                echo '<span class="badge ">'.$skor.'</span>'; 
                                             }else{
-                                                echo '<span class="badge badge-danger">'.$skor.'</span>'; 
+                                                echo '<span class="badge ">'.$skor.'</span>'; 
                                             }
                                             ?>
                                     </td>

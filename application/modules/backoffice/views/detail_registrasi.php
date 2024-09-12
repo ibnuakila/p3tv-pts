@@ -378,37 +378,51 @@
                                         $i++;
                                     }
                                 }
-                                ?>
+                                $rekapitulasi = new Rekapitulasi();
+                                $rekapitulasi->getBy('id_registrasi', $registrasi->getIdRegistrasi());
+                                if($rekapitulasi->getKeterangan() != ''){?>
+                                    <tr>
+                                        <td><?=$i?></td>
+                                        <td>Consolidated Comment</td>
+                                        <td></td>
+                                        <td>
+                                            <a class="" href="<?= base_url() . 'backoffice/kelolarekapitulasi/downloadComment/' . $registrasi->getIdRegistrasi() ?>"><i class="fa fa-download"></i></a>
+                                        </td>
+                                    </tr>
+                                
+                                <?php $i++; } ?>
+                                                                        
                                 <?php
-                                $dokumen_perbaikan = new DokumenPerbaikan();
-                                $dokumen_perbaikan->setSkema($registrasi->getSchema());
-                                $dokumen_perbaikan->setPeriode($registrasi->getPeriode());
-                                $dokumen_perbaikan->setJnsUsulan($registrasi->getJnsUsulan());
-                                $res_dok_per = $dokumen_perbaikan->get('0', '0');
-                                //print_r($res_dok_per);
-                                foreach ($res_dok_per->result() as $rdp) {
+                                
+                                //$dokumen_perbaikan->setSkema($registrasi->getSchema());
+                                //$dokumen_perbaikan->setPeriode($registrasi->getPeriode());
+                                //$dokumen_perbaikan->setJnsUsulan($registrasi->getJnsUsulan());
+                                //$res_dok_per = $dokumen_perbaikan->get('0', '0');
+                                
+                                $dokper_upload = new DokumenPerbaikanUpload();
+                                $params['paging'] = ['row' => 0, 'segment' => 0];
+                                $params['field'][DokumenPerbaikanUpload::table.'.id_registrasi'] = ['=' => $registrasi->getIdRegistrasi()];
+                                $res_dok_per = $dokper_upload->getResult($params);
+                                if($res_dok_per->num_rows()>0){
+                                    foreach ($res_dok_per->result() as $rdp) {
+                                        $params['id_form'] = $rdp->id_form;
+                                        $params['periode'] = '20241';
+                                        $dokumen_perbaikan = new DokumenPerbaikan($params);
                                     ?>
                                     <tr>
                                         <td><?= $i ?></td>
-                                        <td><?= $rdp->form_name ?></td>
-                                        <td></td>
+                                        <td><?= $dokumen_perbaikan->getFormName() ?></td>
+                                        <td><?=$rdp->revisi_proposal?></td>
                                         <td>
-                                            <?php
-                                            $params['id_form'] = $rdp->id_form;
-                                            $params['id_registrasi'] = $registrasi->getIdRegistrasi();
-                                            $dokper_upload = new DokumenPerbaikanUpload($params);
-                                            if ($dokper_upload->getIdUpload() != '') {
-                                                ?>
-                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/downloaddocumentperbaikan/' . $registrasi->getIdRegistrasi() . '/' . $rdp->id_form ?>"><i class="fa fa-download"></i></a> 
-                                            <?php } else { ?>
-                                                <label class="badge-pill badge-danger">File Tidak Tersedia</label>
-                                            <?php } ?>
+                                            <a href="<?= base_url() . 'backoffice/kelolaevaluasi/downloaddocumentperbaikan/' . $registrasi->getIdRegistrasi() . '/' . $rdp->id_upload ?>">
+                                                <i class="fa fa-download"></i></a> 
                                         </td>
                                     </tr>
                                     <?php
                                     $i++;
-                                }
-                                ?>
+                                    } 
+                                }?>
+                                
                             </tbody>
                         </table>
                     </div>

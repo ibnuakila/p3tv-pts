@@ -135,9 +135,9 @@
                                     <td>
                                             <?php 
                                             if($eva->getNilaiTotal() <= 300){
-                                                echo '<span class="badge badge-danger">'.$skor.'</span>'; 
+                                                echo '<span class="badge ">'.$skor.'</span>'; 
                                             }else{
-                                                echo '<span class="badge badge-success">'.$skor.'</span>'; 
+                                                echo '<span class="badge ">'.$skor.'</span>'; 
                                             }
                                             ?>
                                     </td>
@@ -185,6 +185,7 @@
                     </tbody>
                 </table>
             </div>
+            <h4>Total Record: <span class="label label-info"><?= $total_row ?></span></h4>
             <div>
                 <?php
                 echo $this->pagination->create_links();

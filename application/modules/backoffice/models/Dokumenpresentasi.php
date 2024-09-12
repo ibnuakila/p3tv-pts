@@ -138,6 +138,24 @@ class DokumenPresentasi extends CI_Model implements BaseModel
 	{
 		$this->id = $newVal;
 	}
+        
+        public function getDokumenReviewer($params){
+            
+            
+        }
+        
+        public function getDokumenTeknis($params) {
+            $sql = "SELECT * FROM dokumen_presentasi_baru " .
+                    "WHERE bagian = '" . $params['direktorat'] . "' " .
+                    "AND jns_usulan = '" . $params['jns_usulan'] . "' " .
+                    "AND aktor = 'Tim Teknis' " .
+                    "AND periode = '" . $params['periode'] . "'" .
+                    "AND id_jns_file IN('1','2','3','4','5') " .
+                    "AND id_jns_file NOT IN (" .
+                    "SELECT id_jns_file FROM rekapitulasi_berita_acara WHERE id_registrasi = '" . $params['id_registrasi'] . "')";
+
+            return $this->db->query($sql);
+        }
 
 }
 ?>

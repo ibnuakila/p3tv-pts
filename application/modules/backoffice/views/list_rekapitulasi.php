@@ -255,6 +255,7 @@
                         </tbody>
                     </table>
                 </div>
+                <h4>Total Record: <span class="label label-info"><?= $total_row ?></span></h4>
                 <div>
                     <?php
                     echo $this->pagination->create_links();

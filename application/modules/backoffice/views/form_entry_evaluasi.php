@@ -75,12 +75,12 @@
                             </div>
                         </div>
                     <?php if ($proses->getTypeEvaluator() == '2') { ?>
-                        <div class="form-check mb-3">
+                        <!--<div class="form-check mb-3">
                             <input class="form-check-input" type="checkbox" name="final" value="1">
                             <label class="form-check-label" for="defaultCheck1">
                                 File Final
                             </label>
-                        </div>
+                        </div>-->
                         
                         
                     <?php } ?>

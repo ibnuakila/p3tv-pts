@@ -5,7 +5,7 @@
     <div class="card col-sm-12">
         <div class="card-header"><i class="fa fa-upload"></i> Form Unggah </div>
         <div class="card-body">
-            <form class="form-horizontal" method="post" action="<?= base_url() . 'backoffice/kelolaevaluasi/uploadbapmonev/' ?>" accept-charset="utf-8" enctype="multipart/form-data">
+            <form class="form-horizontal" method="post" action="<?= base_url() . 'backoffice/kelolaevaluasi/savecomment/' ?>" accept-charset="utf-8" enctype="multipart/form-data">
                 <?php
                 //$account = $registrasi->getAccount();
                 //$yayasan = $account->getYayasan();

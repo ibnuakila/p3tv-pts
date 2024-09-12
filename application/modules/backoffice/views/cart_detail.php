@@ -1,5 +1,5 @@
 <div class="card mb-3">
-    <div class="card-header"><i class="fa fa-search"></i> Pencarian</div>
+    <div class="card-header"><i class="fa fa-shopping-cart"></i> Data Barang</div>
     <div class="card-body">
     <?php
     $registrasi = new Registrasi($id_registrasi);
@@ -18,6 +18,7 @@
                     <th>No</th>
                     <th>Nama Barang</th>
                     <th>Spesifikasi</th>
+                    <th>Harga</th>
                     <th>Qty</th>
                     <th>Sub Total</th>
                     <th>Action</th>
@@ -26,7 +27,7 @@
             <tbody>
                 <?php
                 if($item_hibah->num_rows()>0){
-                    $i=1; $grand_total=0; $nama = ''; $spesifikasi = ''; $ppn = 0;
+                    $i=1; $grand_total=0; $nama = ''; $spesifikasi = ''; $ppn = 0; $harga=0;
                     foreach ($item_hibah->result() as $row){
                         $params['id_item'] = $row->id_item;
                         $params['periode'] = $periode;
@@ -35,6 +36,7 @@
                             $nama = $item_barang->getBarang();
                             $spesifikasi = $item_barang->getSpesifikasi();
                             //$ppn = ($row->subtotal*10)/100;
+                            $harga = $item_barang->getHarga();
                         }elseif ($registrasi->getJnsUsulan()=='02') {                            
                             $item_barang = new ItemGedung($row->id_item);
                             $nama = $item_barang->getNmGedung();
@@ -61,8 +63,9 @@
                     <td><?=$i ?></td>
                     <td><?=$nama ?></td>
                     <td><?=$spesifikasi ?></td>
+                    <td><?=number_format($harga,2)?></td>
                     <td><?=$row->jml_item ?></td>
-                    <td><?= number_format($subtotal_ppn,2) ?></td>
+                    <td><?=number_format($subtotal_ppn,2) ?></td>
                     <td>
                         <a href="#" title="Edit" class="edit" data-toggle="modal" 
                             data-target="#modal-detail" id="<?= $row->id ?>"><i class="fa fa-edit"></i></a>
@@ -86,10 +89,14 @@
         <?php
         $rekapitulasi = new Rekapitulasi();
         $rekapitulasi->getBy('id_registrasi', $id_registrasi);
+        $proses = new Proses();
+        $proses->getByRelated('registrasi', 'id_registrasi', $id_registrasi);
+        //if($proses->getIdJnsEvaluasi() == '2'){
             if($rekapitulasi->getIdStatusRegistrasi()!='7'){
         ?>
-        <button id="btn-selesai" class="btn btn-outline-primary">Selesai</button>
-            <?php } ?>
+            <!--<button id="btn-selesai" class="btn btn-outline-primary">Selesai</button>-->
+            <?php } 
+        //}?>
         <a href="<?= base_url().'backoffice/kelolabarang/printdatabarang/'.$id_registrasi ?>" class="btn btn-outline-success">Cetak</a>
     </div>
     </div>

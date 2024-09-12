@@ -28,6 +28,7 @@ class KelolaBarang extends MX_Controller implements IControll {
         $this->load->model('Rekapitulasi');
         $this->load->model('Proses');
         $this->load->model('Periode');
+        $this->load->model('Itemongkirpt');
     }
 
     function __destruct() {
@@ -149,14 +150,20 @@ class KelolaBarang extends MX_Controller implements IControll {
         
         if ($this->form_validation->run() === TRUE){
             $registrasi = new Registrasi($id_registrasi);
-            $params = array('id_item' => $id_item, 'periode' => $registrasi->getPeriode());
+            $params = array('id_item' => $id_item, 'periode' => $registrasi->getPeriode(), 'id_registrasi' => $id_registrasi);
             $item_barang = new ItemBarang($params);
             $item_ongkir = new ItemOngkir($id_registrasi);
+            $item_ongkir_pt = new ItemOngkirPt($params);
             $item_hibah = new ItemHibah($id_item_hibah);
             
             //hitung ongkir -------------------
-            $ongkir = $item_barang->getBerat() * $item_ongkir->getOngkirKg();
-            
+            //$ongkir = $item_barang->getBerat() * $item_ongkir->getOngkirKg();
+            //hitung ongkir per pt
+            //if($item_ongkir_pt->idRegistrasi != ''){
+                $ongkir = $item_ongkir_pt->ongkir;
+            //}else{
+                //$ongkir = 1;
+            //}
             //hitung harga barang ----------------            
             $harga_barang = ($item_barang->getHarga() + $ongkir);
             

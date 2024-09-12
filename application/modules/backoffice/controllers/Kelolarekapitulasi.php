@@ -193,7 +193,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
 
             if ($status_registrasi != '') {
                 $params['join']['status_registrasi'] = ["INNER" => "rekapitulasi.id_status_registrasi = status_registrasi.id_status_registrasi"];
-                $params['field']['status_proses.id_status_proses'] = ['=' => $status_proses];
+                $params['field']['status_registrasi.id_status_registrasi'] = ['=' => $status_registrasi];
             }
             $params['order'][Rekapitulasi::table . '.tgl_rekap'] = 'DESC';
             
@@ -304,7 +304,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
         echo $filepath;
         if (is_file($filepath)) {
             $data = file_get_contents($filepath);
-            $name = $registrasi->getIdRegistrasi() . '_' . str_replace(' ', '_', $pt->getNmPti()) . '_coco.docx';
+            $name = $registrasi->getIdRegistrasi() . '_' . str_replace(' ', '_', $pt->getNmPti()) . '_coco.pdf';
             force_download($name, $data);
         } else {
             echo 'File not found!';
@@ -326,6 +326,10 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
                 $rekapitulasi->update();
                 
                 $registrasi->setIdStatusRegistrasi($rekapitulasi->getIdStatusRegistrasi()); 
+                if($rekapitulasi->getIdStatusRegistrasi() == 10){
+                    $revision = $registrasi->getRevisiProposal();
+                    $registrasi->setRevisiProposal($revision + 1);
+                }
                 $registrasi->setPenugasan(0);
                 $result = $registrasi->update();
             } else {
@@ -355,7 +359,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
             $status = $this->input->post('id_status_registrasi');
             $rekapitulasi = new Rekapitulasi($id_rekapitulasi);
             $rekapitulasi->setIdStatusRegistrasi($status);            
-                        
+            
             $rekapitulasi->setPublish('no');
             $rekapitulasi->setTglPublish(null);
             $result = $rekapitulasi->update();                

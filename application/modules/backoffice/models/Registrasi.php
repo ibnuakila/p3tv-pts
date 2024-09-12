@@ -37,6 +37,8 @@ class Registrasi extends CI_Model implements BaseModel {
     private $schema;
     private $ubahPt;
     private $rencanaUbahPt;
+    private $revisiProposal;
+
     const table = 'registrasi';
 
     function __construct($id = NULL) {
@@ -62,6 +64,7 @@ class Registrasi extends CI_Model implements BaseModel {
                     $this->setUbahPt($value->ubah_pt);
                     $this->setRencanaUbahPt($value->rencana_ubah_pt);
                     $this->setJnsUsulan($value->jns_usulan);
+                    $this->setRevisiProposal($value->revisi_proposal);
                 }
             }
         }
@@ -69,6 +72,14 @@ class Registrasi extends CI_Model implements BaseModel {
 
     function __destruct() {
         
+    }
+    
+    public function setRevisiProposal($value){
+        $this->revisiProposal = $value;
+    }
+    
+    public function getRevisiProposal(){
+        return $this->revisiProposal;
     }
 
     public function getAccount() {
@@ -155,16 +166,16 @@ class Registrasi extends CI_Model implements BaseModel {
         $this->db->join('proses_registrasi pr', 'r.id_registrasi = pr.id_registrasi');
         $this->db->join('proses p', 'pr.id_proses = p.id_proses');
         $this->db->where('r.id_registrasi', $this->idRegistrasi);
-        //$this->db->where('p.id_jns_evaluasi', '2');
+        $this->db->where('p.id_jns_evaluasi', '2');
         $result = $this->db->get();
-        $this->objProses = new ArrayObject();
+        /*$this->objProses = new ArrayObject();
         if ($result->num_rows() > 0) {
             foreach ($result->result() as $value) {
                 $Proses = new Proses($value->id_proses);
                 $this->objProses->append($Proses);
             }
-        }
-        return $this->objProses;
+        }*/
+        return $result;
     }
 
     public function getDokumenRegistrasi() {
@@ -399,7 +410,8 @@ class Registrasi extends CI_Model implements BaseModel {
 
     public function update() {
         $data = array('id_status_registrasi' => $this->idStatusRegistrasi,
-            'penugasan' => $this->penugasan
+            'penugasan' => $this->penugasan,
+            'revisi_proposal' => $this->revisiProposal
         );
         $this->db->where('id_registrasi', $this->idRegistrasi);
         return $this->db->update('registrasi', $data);

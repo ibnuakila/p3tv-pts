@@ -261,7 +261,7 @@ class KelolaPenugasan extends MX_Controller implements IControll
                 }
                 $table = 'registrasi';
                 $params['field'][$table.'.id_status_registrasi'] = ['IN' => [2,3,11,8]];
-                $params['field'][$table.'.penugasan'] = ['<' => 2];
+                $params['field'][$table.'.penugasan'] = ['<' => 3];
                 $params['field'][$table.'.periode'] = ['=' => $current_periode];
                 if($id_registrasi != ''){                    
                     $params['field'][$table.'.id_registrasi'] = ['=' => $id_registrasi];

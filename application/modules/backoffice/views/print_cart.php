@@ -13,14 +13,30 @@
     <?php
     $registrasi = new Registrasi($id_registrasi);
     $pt = $registrasi->getPti();
-    $arrProses = $registrasi->getProses2();
+    $result_proses = $registrasi->getProses2();
     $penyelenggara = $registrasi->getPenyelenggara();
-    $pro1 = $arrProses[0];
-    $pro2 = $arrProses[1];
+    $res_array = $result_proses->result('array');
+    //$pro1 = $res_array[0];
+    //$pro2 = $res_array[1];
     
-    $eva1 = new Evaluator($pro1->getIdEvaluator());
-    $eva2 = new Evaluator($pro2->getIdEvaluator());
-    
+    //$eva1 = new Evaluator($pro1['id_evaluator']);
+    //$eva2 = new Evaluator($pro2['id_evaluator']);
+    $reviewer_1 = ''; $reviewer_2 = ''; $t_teknis = '';
+    foreach ($result_proses->result() as $row) {
+            if ($row->type_evaluator == '1') {
+                $evaluator = new Evaluator($row->id_evaluator);
+                if($reviewer_1 == ''){
+                    $reviewer_1 = $evaluator->getNmEvaluator();
+                }else{
+                    $reviewer_2 = $evaluator->getNmEvaluator();
+                }
+                
+            } elseif ($row->type_evaluator == '2') {
+                $evaluator = new Evaluator($row->id_evaluator);
+                $t_teknis = $evaluator->getNmEvaluator();
+            }
+            
+        }
     ?>
     <h3 class="display-5 text-center">
         Usulan Barang <?= $pt->getNmPti() ?>
@@ -75,11 +91,14 @@
         <table class="table">
             <tr>
                 <td><b>Reviewer</b> </br></br>
-                <?php if($pro1->getTypeEvaluator()=='1'){ 
-                    echo $eva1->getNmEvaluator();                    
-                }else{
-                    echo $eva2->getNmEvaluator();
-                }?></td>
+                    <?=$reviewer_1?>
+                </td>
+                <td><b>Reviewer</b> </br></br>
+                    <?=$reviewer_2?>
+                </td>
+                <td><b>Tim Teknis</b> </br></br>
+                    <?=$t_teknis?>
+                </td>
                 <td><b>Ketua <?=$penyelenggara->getNamaPenyelenggara() ?></b> </br></br>-------------------</td>
             
             </tr>
