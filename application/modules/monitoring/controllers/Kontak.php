@@ -11,6 +11,7 @@ class Kontak extends MX_Controller {
         parent::__construct();
         $this->load->model('Modusers');
         $this->load->library('sessionutility');
+        $this->load->library('form_validation');
         $this->load->helper('datatables');
         if (!$this->sessionutility->validateSession()) {
             redirect(base_url() . 'backoffice/');
@@ -26,8 +27,6 @@ class Kontak extends MX_Controller {
         showBackEnd('form_login');
     }
 
-  
-  
     public function index() {
 
         if ($this->sessionutility->validateAccess($this)) {
@@ -46,8 +45,8 @@ class Kontak extends MX_Controller {
             //  if ($dt->unit_id == '26') {
             //    showBackEnd1('listpti1', $data);
             // } else {
-           // showBackEnd('listtanya', $data,'index_new');
-              showNewBackEnd('listtanya', $data, 'index-1');
+            // showBackEnd('listtanya', $data,'index_new');
+            showNewBackEnd('listtanya', $data, 'index-1');
             // }
         } else {
             echo 'gak login';
@@ -59,83 +58,89 @@ class Kontak extends MX_Controller {
         }
     }
 
-   
     public function jawab($id) {
+       // redirect(base_url() . 'monitoring/kontak/index');
         if ($this->session->userdata('is_loged_in') == FALSE)
             redirect('officer');
         $data['title'] = "Jawab Pertanyaan";
         $data['row'] = $this->db->query("select * from hubungikami where id='$id'")->row();
-      //  showBackEnd1('jawab', $data);
+        //  showBackEnd1('jawab', $data);
         showNewBackEnd('jawab', $data, 'index-1');
     }
 
-  
-  
-
-  
-
-   
     public function savejawab() {
-        if ($this->session->userdata('is_loged_in') == FALSE)
-            redirect('officer');
-        $config = Array(
-            'protocol' => 'smtp',
-            'smtp_host' => 'ssl://smtp.googlemail.com',
-            'smtp_port' => 465,
-            'smtp_user' => 'adm.kelembagaan@gmail.com',
-            'smtp_pass' => 'tcinrffvyvpfvpvq',
-            'mailtype' => 'html',
-            'charset' => 'iso-8859-1'
-        );
-        
+        if ($this->session->userdata('is_loged_in') == FALSE) redirect('officer');
 
-        $this->load->library('email', $config);
-        $from = "adm.kelembagaan@gmail.com";
-        $to = $this->input->post('email');
-        $subject = $this->input->post('subjek');
-        
-        $isi = $this->input->post('isi');
-        $tanya = $this->input->post('tanya');
-        $id = $this->input->post('id');
-         
-        $isi2 = $isi."<br/> <br/> \r\n\r\n Pertanyaan : \r\n <br/>".$tanya;
-        
-        $this->email->set_newline("\r\n");
+       
 
-        $this->email->from($from, ' ppptv-pts');
-        $this->email->to($to);
-        $this->email->subject($subject);
-        $this->email->message($isi2);
+       
 
-        if ($this->email->send()) {
-            
-            $userid = strtoupper($this->session->userdata('userid'));
-            $data = array(
-                'jawaban' => $isi,
-                'userjawab' => $userid,
-                'status' => '1',
-                'updated_at' => date('Y-m-d H:i:s')
+            $to = $this->input->post('email', TRUE); // TRUE untuk XSS Cleaning
+            $subject = $this->input->post('subjek', TRUE);
+            $isi = $this->input->post('isi', TRUE);
+            $tanya = $this->input->post('tanya', TRUE);
+            $id = $this->input->post('id', TRUE);
+
+
+
+            $config = Array(
+                'protocol' => 'smtp',
+                'smtp_host' => 'ssl://smtp.googlemail.com',
+                'smtp_port' => 465,
+                'smtp_user' => 'adm.kelembagaan@gmail.com',
+                'smtp_pass' => 'tcinrffvyvpfvpvq',
+                'mailtype' => 'html',
+                'charset' => 'iso-8859-1'
             );
-               $this->db->where('id', $id);
-        //print_r($data);
-
-        if ($this->db->update('hubungikami', $data))
-            echo '<script>';
-        //echo '<script type="text/javascript">';
-        echo 'alert(" Email Sudah Terkirim ");';
-        echo "window.location='" . base_url('monitoring/kontak/index') . "'";
-        echo '</script>';
-
-        } else {
 
 
-            echo '<script>';
-            //echo '<script type="text/javascript">';
-            echo 'alert(" Email Tidak Terkirim ");';
-            echo "window.location='" . base_url('monitoring/kontak/index') . "'";
-            echo '</script>';
+            $this->load->library('email', $config);
+            $from = "adm.kelembagaan@gmail.com";
+
+//            $to = $this->input->post('email');
+//            $subject = $this->input->post('subjek');
+//            $isi = $this->input->post('isi');
+//            $tanya = $this->input->post('tanya');
+//            $id = $this->input->post('id');
+
+            $isi2 = $isi . "<br/> <br/> \r\n\r\n Pertanyaan : \r\n <br/>" . $tanya;
+
+            $this->email->set_newline("\r\n");
+
+            $this->email->from($from, ' ppptv-pts');
+            $this->email->to($to);
+            $this->email->subject($subject);
+            $this->email->message($isi2);
+
+            if ($this->email->send()) {
+
+                $userid = strtoupper($this->session->userdata('userid'));
+                $data = array(
+                    'jawaban' => $isi,
+                    'userjawab' => $userid,
+                    'status' => '1',
+                    'updated_at' => date('Y-m-d H:i:s')
+                );
+                $this->db->where('id', $id);
+                //print_r($data);
+
+                if ($this->db->update('hubungikami', $data))
+                    echo '<script>';
+                //echo '<script type="text/javascript">';
+                echo 'alert(" Email Sudah Terkirim ");';
+                echo "window.location='" . base_url('monitoring/kontak/index') . "'";
+                echo '</script>';
+            } else {
+
+
+                echo '<script>';
+                //echo '<script type="text/javascript">';
+                echo 'alert(" Email Tidak Terkirim ");';
+                echo "window.location='" . base_url('monitoring/kontak/index') . "'";
+                echo '</script>';
+            }
         }
-    }
+    
 
     private function clearField($string) {
         $string = str_replace("'", "", $string);
@@ -151,7 +156,6 @@ class Kontak extends MX_Controller {
         return $string;
     }
 
-   
     public function lookup() {
         $table = " select * from ( SELECT id, nama, email, wa, judul, pesan, status, userjawab, jawaban, DATE_FORMAT(created_at, '%d-%m-%Y') AS created_at, updated_at
 FROM hubungikami order by status, id desc ) as adh ";
@@ -170,8 +174,8 @@ FROM hubungikami order by status, id desc ) as adh ";
             array('db' => 'email', 'dt' => 2),
             array('db' => 'wa', 'dt' => 3),
             array('db' => 'created_at', 'dt' => 4),
-            array('db' => 'judul', 'dt' => 5),            
-            array('db' => 'userjawab', 'dt' => 6),            
+            array('db' => 'judul', 'dt' => 5),
+            array('db' => 'userjawab', 'dt' => 6),
             array('db' => 'status', 'dt' => 7)
         );
 
@@ -180,7 +184,6 @@ FROM hubungikami order by status, id desc ) as adh ";
         );
     }
 
-   
 }
 
 ?>

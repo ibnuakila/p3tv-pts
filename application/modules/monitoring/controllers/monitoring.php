@@ -194,15 +194,26 @@ class Monitoring extends MX_Controller {
                 concat(ceiling((a.volume_terkirim/a.volume)*100),'%') as presensi ,merk,type  
                     from tbl_detail_paket_hibah a join tbl_pti b on 
 						a.kdpti =b.kdpti 
-						join tbl_item_barang c on a.id_item = c.id_item where a.kdpti='$id' and c.periode='20221' and left(id_registrasi,2)='22'")->result();
+						join tbl_item_barang c on a.id_item = c.id_item where a.kdpti='$id' and c.periode='20231' ")->result();
         echo json_encode($data);
     }
     public function listbarang($id) {
         if ($this->session->userdata('is_loged_in') == FALSE)
-            redirect('officer');                   
-        $data['title'] = "Detail Barang Hibah 2022";
+            redirect('officer');  
+         echo add_footer_css('vendor/DataTables-1.10.6/media/css/jquery.dataTables.css');
+            echo add_footer_css('vendor/DataTables-1.10.6/extensions/TableTools/css/dataTables.tableTools.css');
+            echo add_footer_css('vendor/DataTables/media/css/dataTables.bootstrap.css');
+            echo add_footer_js('vendor/DataTables-1.10.6/media/js/jquery.dataTables.js');
+            echo add_footer_js('vendor/DataTables-1.10.6/extensions/TableTools/js/dataTables.tableTools.js');
+            echo add_footer_js('admin/js/plugins/dataTables/dataTables.bootstrap.js');
+        $data['title'] = "Detail Barang Hibah 2023";
         $data['row'] = $this->db->query("SELECT kdpti,nmpti FROM tbl_pti where kdpti='$id'")->row();  
         // showNewBackEnd('frmdetilbarang', $data, 'index-1');
+          $data['barang'] = $this->db->query("select a.kdpti,c.barang,c.spesifikasi, a.volume jumlah_barang, 
+                concat(ceiling((a.volume_terkirim/a.volume)*100),'%') as presensi ,merk,type  
+                    from tbl_detail_paket_hibah a join tbl_pti b on 
+						a.kdpti =b.kdpti 
+						join tbl_item_barang c on a.id_item = c.id_item where a.kdpti='$id' and c.periode='20231' and left(id_registrasi,2)='23' ")->result();
         showNewBackEnd('frmdetilbarang2',$data,  'index-1');
     }
     public function saveuser() {
