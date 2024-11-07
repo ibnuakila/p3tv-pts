@@ -153,7 +153,7 @@
 
                                         <td>
                                             <a href="<?= base_url() . 'backoffice/kelolapaket/remove/' . $obj->id ?>" title="Remove" onclick="return deletechecked()">
-                                                <i class="fa fa-remove"></i> </a>
+                                                <i class="fa fa-trash"></i> </a>
                                             <a href="<?= base_url() . 'backoffice/kelolapaket/edit/' . $obj->id ?>" title="Edit">
                                                 <i class="fa fa-edit"></i> </a>
                                         </td>

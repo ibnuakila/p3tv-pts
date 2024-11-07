@@ -25,7 +25,7 @@
                     <a class="nav-link text-uppercase" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Dokumen</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-uppercase" id="dana-tab" data-toggle="tab" href="#dana" role="tab" aria-controls="profile" aria-selected="false">Dana Pendamping</a>
+                    <a class="nav-link text-uppercase" id="dana-tab" data-toggle="tab" href="#dana" role="tab" aria-controls="profile" aria-selected="false">Pelaporan</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -510,8 +510,42 @@
                         </table>
                     </div>
                 </div>
-                <!-- Tab dana pendamping -->
+                <!-- Tab dana pendamping -->              
                 <div class="tab-pane fade" id="dana" role="tabpanel" aria-labelledby="profile-tab">
+                    <h3>Laporan Kemajuan</h3>
+                        <table class="table table-striped">
+                            <thead>
+                            <th>No Registrasi</th>
+                            <th>Berkas</th>
+                            <th>Tgl Upload</th>                            
+                            <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $lap_kemajuan = new Laporankemajuan($registrasi->getIdRegistrasi());
+                                if($lap_kemajuan->id != ''){
+                                ?>
+                                <tr>
+                                    <td><?= $lap_kemajuan->idRegistrasi?></td>
+                                    <td>Laporan Kemajuan</td>
+                                    <td><?= $lap_kemajuan->uploadDate?></td>
+                                    <td>
+                                        <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadlaporankemajuan/' . $lap_kemajuan->idRegistrasi ?>" title="Unduh">
+                                                <i class="fa fa-download"></i>
+                                                <a/>
+                                    </td>
+                                    
+                                </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    <?php
+                    
+                    include('detail_pelaporan.php');
+                    ?>
+                </div>
+                
+                <!--<div class="tab-pane fade" id="dana" role="tabpanel" aria-labelledby="profile-tab">
                         
                     <div class="table-responsive">
                         <h3>Laporan Akhir</h3>
@@ -751,7 +785,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>

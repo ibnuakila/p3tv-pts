@@ -53,7 +53,7 @@
                             $no = 1;
                             
                             foreach ($result->result() as $row) {
-                                $params = ['id_item' => $row->id_item, 'periode' => $periode[0]];
+                                $params = ['id_item' => $row->id_item, 'periode' => $periode];
                                 $item_barang = new ItemBarang($params);
                             
                     ?>
