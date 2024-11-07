@@ -187,6 +187,12 @@ class Periode extends CI_Model implements BaseModel
             }*/
             return $row;
         }
+        
+        public function getLastPeriode()
+        {
+            $this->db->select('periode');
+            $this->db->from('tbl_periode');
+        }
 
 }
 ?>
