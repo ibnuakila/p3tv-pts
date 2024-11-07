@@ -43,6 +43,7 @@ class KelolaProses extends MX_Controller implements IControll {
         $this->load->model('LaporanCapaian');
         $this->load->model('LaporanIndikator');
         $this->load->model('Jenisevaluasi');
+        $this->load->model('Laporanakhiriku');
         $this->load->model('Laporankemajuan');
         $this->load->model('Danapendamping');
         $this->load->model('Rekapitulasi');
@@ -388,7 +389,7 @@ class KelolaProses extends MX_Controller implements IControll {
         $params['field']['proses.id_evaluator'] = ['=' => $user->getIdEvaluator()];
         $params['field'][$table . '.id_status_proses'] = ['IN' => [1, 2, 4]];
         if ($current_periode != '') {
-            $params['field']['registrasi.periode'] = ['=' => $current_periode];
+            //$params['field']['registrasi.periode'] = ['=' => $current_periode];
         }
 
         if ($id_registrasi != '') {
@@ -1310,7 +1311,8 @@ class KelolaProses extends MX_Controller implements IControll {
 
     public function getBapMonev() {
 
-        $filepath = realpath(APPPATH . '../assets/documents/vokasi/Berita_Acara_monev_P3TVTS_2023.docx');
+        //2023//$filepath = realpath(APPPATH . '../assets/documents/vokasi/Berita_Acara_monev_P3TVTS_2023.docx');
+        $filepath = realpath(APPPATH . '../assets/documents/vokasi/Template BA Monev P3TV-PTS 2024.docx');
 
         $id_registrasi = $this->uri->segment(4);
         $registrasi = new Registrasi($id_registrasi);

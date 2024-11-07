@@ -37,6 +37,7 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
         $this->load->model('Laporanakhirdanapendamping');
         $this->load->model('Laporanakhirpemanfaatan');
         $this->load->model('Rekapitulasi');
+        $this->load->model('Luaranprogram');
     }
 
     function __destruct() {
@@ -294,7 +295,7 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
               $params['field'][$table.'.skema'] = ['=' => $schema];
               } */
             if ($current_periode != '') {
-                $params['field'][$table . '.periode'] = ['=' => $current_periode];
+                //$params['field'][$table . '.periode'] = ['=' => $current_periode];
             }
             if ($status_registrasi != '') {
                 $params['field'][$table . '.id_status_registrasi'] = ['=' => $status_registrasi];

@@ -184,7 +184,7 @@ class KelolaRekapitulasi extends MX_Controller implements IControll {
                 $params['field']['tbl_pti.nmpti'] = ['LIKE' => $pti];
             }
             if ($current_periode != '') {
-                $params['field']['registrasi.periode'] = ['=' => $current_periode];
+                //$params['field']['registrasi.periode'] = ['=' => $current_periode];
             }
             if ($evaluator != '') {
                 $params['join']['evaluator'] = ["INNER" => "proses.id_evaluator = evaluator.id_evaluator"];

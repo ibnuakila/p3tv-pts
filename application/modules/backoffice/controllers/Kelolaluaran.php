@@ -25,6 +25,7 @@ class KelolaLuaran extends CI_Controller implements IControll{
         $this->load->model('pti');        
         $this->load->model('periode');        
         $this->load->model('Rekapitulasi');
+        $this->load->model('Laporankemajuan');
         $this->load->helper('download');
     }
 
@@ -132,5 +133,33 @@ class KelolaLuaran extends CI_Controller implements IControll{
             echo json_encode($response);
         }
         
+    }
+
+    public function downloadBukti($id){
+        $this->load->helper('download');
+        $lapKemajuan = new Laporankemajuan($id);
+        if ($lapKemajuan->id != '') {
+            $path = $lapKemajuan->filePath;
+            $dokumen_name = $lapKemajuan->namaDokumen;
+            if (is_file($path)) {
+                $ext = pathinfo($path, PATHINFO_EXTENSION);
+                $data = file_get_contents($path);
+                $name = $dokumen_name . $ext;
+                //echo 'name: '.$name;
+                force_download($name, $data);
+            } else {
+                $temp_path = '/home/pppts/frontends/frontend/web/' . $path;
+                //echo $temp_path;
+                if (is_file($temp_path)) {
+                    $ext = pathinfo($temp_path, PATHINFO_EXTENSION);
+                    $data = file_get_contents($temp_path);
+                    $name = $dokumen_name . '.' . $ext;
+                    //echo 'name: '.$name;
+                    force_download($name, $data);
+                } else {
+                    echo 'File not found!';
+                }
+            }
+        }
     }
 }

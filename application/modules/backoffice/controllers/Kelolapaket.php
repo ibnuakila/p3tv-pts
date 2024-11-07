@@ -36,6 +36,7 @@ class KelolaPaket extends MX_Controller implements IControll {
         $this->load->model('Periode');
         $this->load->model('Terimabarang');
         $this->load->model('Rekapitulasi');
+        $this->load->model('Modusers');
     }
 
     function __destruct() {
@@ -433,9 +434,9 @@ class KelolaPaket extends MX_Controller implements IControll {
                     $volume = $objPHPExcel->getActiveSheet()->getCell('H' . $i)->getCalculatedValue();
                     $kdpti = $objPHPExcel->getActiveSheet()->getCell('I' . $i)->getCalculatedValue();
                     $hps = $objPHPExcel->getActiveSheet()->getCell('J' . $i)->getCalculatedValue();
-
+                    $ongkir = $objPHPExcel->getActiveSheet()->getCell('K' . $i)->getCalculatedValue();
                     $biaya_kirim = 0;
-                    $total = $volume + $hps + $biaya_kirim;
+                    $total = $volume + $hps + $ongkir;
                     if (!is_null($kdpti)) {
                         $registrasi = new Registrasi();
                         $registrasi->getBy('kdpti', $kdpti);
@@ -592,7 +593,7 @@ class KelolaPaket extends MX_Controller implements IControll {
                 foreach ($result_detail->result() as $obj) {
                     $detail_hibah = new DetailPaketHibah();
                     $detail_hibah->getBy('id', trim($obj->id_detail_paket_hibah));
-                    $params = ['id_item' => trim($detail_hibah->getIdItem()), 'periode' => $current_periode[0]];
+                    $params = ['id_item' => trim($detail_hibah->getIdItem()), 'periode' => $current_periode->periode];
                     $barang = new ItemBarang($params);
                     $objPHPExcel->getActiveSheet()->setCellValue('A' . $r, ++$no);
                     $objPHPExcel->getActiveSheet()->setCellValue('B' . $r, $barang->getBarang());
@@ -739,7 +740,7 @@ class KelolaPaket extends MX_Controller implements IControll {
     public function indexTerima() {
         if ($this->sessionutility->validateAccess($this)) {
             $view = 'list_terima_barang';
-
+            //echo 'test';
             $registrasi = new Registrasi();
             //$registrasi->setIdStatusRegistrasi('0');
             $segment = $this->uri->segment(4, 0);
@@ -747,10 +748,14 @@ class KelolaPaket extends MX_Controller implements IControll {
             $periode = new Periode();
             $periode->getBy('status_periode', 'open');
             $current_periode = $periode->getOpenPeriode();
-            $registrasi->setPeriode($current_periode);
+            
+            //$registrasi->setPeriode($current_periode->periode);
+           
+            
             $registrasi->setIdStatusRegistrasi('9');
 
             $result = $registrasi->get($per_page, $segment);
+            //var_dump($result);
             $total_row = $registrasi->get();
             $base_url = base_url() . 'backoffice/kelolapaket/indexterima';
             setPagingTemplate($base_url, 4, $total_row, $per_page);
@@ -800,7 +805,7 @@ class KelolaPaket extends MX_Controller implements IControll {
             //$record_periode = $periode->get('0', '0');
             $current_periode = $periode->getOpenPeriode();
 
-            $registrasi->setPeriode($current_periode);
+            //$registrasi->setPeriode($current_periode->periode);
             //$segment = $this->uri->segment(4,0);
             $per_page = 20;
             $total_row = 0;
@@ -874,7 +879,7 @@ class KelolaPaket extends MX_Controller implements IControll {
         $current_periode = $periode->getOpenPeriode();
         $data['result'] = $result;   
         $data['registrasi'] = $registrasi;
-        $data['periode'] = $current_periode;
+        $data['periode'] = $current_periode->periode;
         $view = 'list_kirim_terima';
         showNewBackEnd($view, $data, 'index-1');
     }
