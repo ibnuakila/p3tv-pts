@@ -49,6 +49,17 @@ class KelolaProses extends MX_Controller implements IControll {
         $this->load->model('Rekapitulasi');
         $this->load->model('Luaranprogram');
         $this->load->helper('download');
+        $this->load->model('Paket');
+        $this->load->model('Detailpakethibah');
+        $this->load->model('Kirim');
+        $this->load->model('Detailkirim');
+        $this->load->model('Supplier');
+        $this->load->model('Itemhibah');
+        $this->load->model('Registrasi');
+        $this->load->model('Barang');        
+        $this->load->model('Itembarang');
+        //$this->load->model('Periode');
+        $this->load->model('Terimabarang');
     }
 
     function __destruct() {
@@ -297,7 +308,7 @@ class KelolaProses extends MX_Controller implements IControll {
             $params['join']['status_proses'] = ['INNER' => "proses.id_status_proses = status_proses.id_status_proses"];
             $params['field']['status_proses.id_status_proses'] = ['=' => $status_proses];
         }
-
+        $params['order'] = ['tgl_kirim'=> 'DESC'];
         $result_proses = $proses->getResult($params);
 
         //config pagination                     
@@ -413,7 +424,8 @@ class KelolaProses extends MX_Controller implements IControll {
             $params['join']['status_proses'] = ['INNER' => "proses.id_status_proses = status_proses.id_status_proses"];
             $params['field']['status_proses.id_status_proses'] = ['=' => $status_proses];
         }
-
+        //order
+        $params['order'] = ['tgl_kirim'=> 'DESC'];
 
         $result_proses = $proses->getResult($params);
 
@@ -507,9 +519,17 @@ class KelolaProses extends MX_Controller implements IControll {
         $res_dana = $dana->getResult($params);
         $prodi_pelaporan->setKdPti($kode_pt);
         $prodi = $prodi_pelaporan->get('0', '0');
+
+        $this->db->select('tbl_detail_paket_hibah.*, tbl_terima_barang.id_terima, tbl_terima_barang.receive_date');
+        $this->db->from('tbl_detail_paket_hibah');
+        $this->db->join('tbl_terima_barang', 'tbl_detail_paket_hibah.id = tbl_terima_barang.id_detail_paket', 'left');
+        $this->db->where('tbl_detail_paket_hibah.id_registrasi', $id_reg);
+        $terima_barang = $this->db->get();
+
         $data['data_prodi'] = $prodi;
         $data['registrasi'] = $registrasi;
         $data['danas'] = $res_dana;
+        $data['terima_barang'] = $terima_barang;
         add_footer_js('tinymce/tinymce.min.js');
         add_footer_js('js/app/registrasi.js');
         showNewBackEnd($view, $data, 'index-1');

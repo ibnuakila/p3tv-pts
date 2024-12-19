@@ -19,8 +19,9 @@ $result = $luaran->getResult($param_luaran);
                 <th class="text-center">Waktu Pelaksanaan</th>
                 <th class="text-center">Biaya</th>
                 <th class="text-center">Target IKU</th>
-                <th class="text-center">Keterangan</th>
+                <th class="text-center">Realisasi</th>
                 <th class="text-center">File Bukti</th>
+                <th class="text-center">Kuitansi</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +40,7 @@ $result = $luaran->getResult($param_luaran);
                         <td><?= $row->waktu_pelaksanaan ?></td>
                         <td><?= $row->biaya ?></td>
                         <td><?= $row->target_iku ?></td>
-                        <td><?= $row->keterangan ?></td>
+                        <td><?= $row->real_keuangan ?></td>
                         <td>
                             <?php
                                 $lapKemajuan = new Laporankemajuan();
@@ -47,14 +48,20 @@ $result = $luaran->getResult($param_luaran);
                                 $paramKemajuan['field'][Laporankemajuan::table.'.luaran_program_id'] = ['=' => $row->id];
                                 $resLapKemajuan = $lapKemajuan->getResult($paramKemajuan);  
                                 if ($resLapKemajuan->num_rows() > 0) {
-                                    foreach( $resLapKemajuan->result() as $row) {
-                                        echo '<a href="'.base_url().'backoffice/kelolaluaran/downloadbukti/'.$row->id.'">'.$row->nama_dokumen.'</a>';
+                                    foreach( $resLapKemajuan->result() as $row) {?>
+                                        <ul>
+                                            <li>
+                                            <a href="<?=base_url()?>backoffice/kelolaluaran/downloadbukti/<?=$row->id?>"><?=$row->nama_dokumen?></a>
+                                            </li>
+                                        </ul>                                           
+                                <?php
                                     }
                                 }else{
                                     echo '-';
                                 }
                             ?>
                         </td>
+                        <td></td>
                     </tr>
             <?php $i++;
                 }

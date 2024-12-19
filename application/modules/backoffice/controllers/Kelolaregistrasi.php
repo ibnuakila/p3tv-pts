@@ -38,6 +38,16 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
         $this->load->model('Laporanakhirpemanfaatan');
         $this->load->model('Rekapitulasi');
         $this->load->model('Luaranprogram');
+        $this->load->model('Terimabarang');
+        $this->load->model('Paket');
+        $this->load->model('Detailpakethibah');
+        $this->load->model('Kirim');
+        $this->load->model('Detailkirim');
+        $this->load->model('Supplier');
+        $this->load->model('Itemhibah');
+        $this->load->model('Registrasi');
+        $this->load->model('Barang');        
+        $this->load->model('Itembarang');
     }
 
     function __destruct() {
@@ -410,6 +420,11 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
             $prodi_pelaporan->setKdPti($kode_pt);
             $prodi = $prodi_pelaporan->get('0', '0');
             
+            $this->db->select('tbl_detail_paket_hibah.*, tbl_terima_barang.id_terima, tbl_terima_barang.receive_date');
+            $this->db->from('tbl_detail_paket_hibah');
+            $this->db->join('tbl_terima_barang', 'tbl_detail_paket_hibah.id = tbl_terima_barang.id_detail_paket', 'left');
+            $this->db->where('tbl_detail_paket_hibah.id_registrasi', $id_reg);
+            $result = $this->db->get();
             
             $data['data_prodi'] = $prodi;
             $data['registrasi'] = $registrasi;
@@ -417,6 +432,7 @@ class KelolaRegistrasi extends MX_Controller implements IControll {
             $data['data_lap_iku'] = $res_iku;
             $data['data_lap_pemanfaatan'] = $res_pemanfaatan;
             $data['data_lap_dana_pendamping'] = $res_dana_pendamping;
+            $data['terima_barang'] = $result;
             add_footer_js('tinymce/tinymce.min.js');
             add_footer_js('js/app/registrasi.js');
             showNewBackEnd('backoffice/' . $view, $data, 'index-1');

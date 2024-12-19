@@ -22,10 +22,13 @@
                 <li class="nav-item">
                     <a class="nav-link active text-uppercase" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Data Usulan</a>
                 <li class="nav-item">
-                    <a class="nav-link text-uppercase" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Dokumen</a>
+                    <a class="nav-link text-uppercase" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="dokumen" aria-selected="false">Dokumen</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-uppercase" id="dana-tab" data-toggle="tab" href="#dana" role="tab" aria-controls="profile" aria-selected="false">Pelaporan</a>
+                    <a class="nav-link text-uppercase" id="dana-tab" data-toggle="tab" href="#dana" role="tab" aria-controls="pelaporan" aria-selected="false">Pelaporan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-uppercase" id="terima-tab" data-toggle="tab" href="#terima" role="tab" aria-controls="terima" aria-selected="false">Terima Barang</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -543,6 +546,56 @@
                     
                     include('detail_pelaporan.php');
                     ?>
+                </div>
+
+                <div class="tab-pane fade" id="terima" role="tabpanel" aria-labelledby="terima-tab">
+                <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID Registrasi</th>
+                                    <th>Nama Dokumen</th>
+                                    <th>Tgl Upload</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $this->db->select('*'); $this->db->from('laporan_akhir');$this->db->where('id_registrasi', $registrasi->getIdRegistrasi());
+                                $res_file_dp = $this->db->get();
+                                if($res_file_dp->num_rows() > 0){
+                                    foreach ($res_file_dp->result() as $res){?>
+                                <tr>
+                                    <td><?= $res->id_registrasi?></td>
+                                    <td>
+                                        <?php
+                                            if($res->tipe_file == 'pdf'){
+                                                echo 'Surat Pernyataan';
+                                            }else{
+                                                echo 'Laporan Akhir';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td><?= $res->upload_date?></td>
+                                    <td>
+                                        <a href="<?= base_url() . 'backoffice/kelolaregistrasi/downloadlaporanakhir/' . $res->id ?>" title="Unduh">
+                                                <i class="fa fa-download"></i>
+                                        <a/>
+                                        <?php if($res->tipe_file == 'excel'){ 
+                                                $lap_akhir_iku = new LaporanAkhirIku($res->id_registrasi);
+                                                if(!$lap_akhir_iku->isExist()){
+                                            ?>
+                                        <a href="" title="Read Laporan Akhir" id="get-laporan" id-laporan="<?=$res->id?>">
+                                                <i class="fa fa-eye"></i>
+                                        <a/>
+                                        <?php   } 
+                                        }?>
+                                    </td>
+                                </tr>
+                                <?php } 
+                                } ?>
+                            </tbody>
+                        </table>
+                    <?php include('list_kirim_terima.php'); ?>
                 </div>
                 
                 <!--<div class="tab-pane fade" id="dana" role="tabpanel" aria-labelledby="profile-tab">

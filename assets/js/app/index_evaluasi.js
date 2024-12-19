@@ -1,7 +1,7 @@
 $("document").ready(function () {
     var url = $("#url").val();
     
-        $("#tglawal").datepicker({
+        /*$("#tglawal").datepicker({
             dateFormat: "yy-mm-dd",
             changeYear: true
         });
@@ -19,7 +19,7 @@ $("document").ready(function () {
         $("#tglakhir2").datepicker({
             dateFormat: "yy-mm-dd",
             changeYear: true
-        });
+        });*/
 
         $("#filter").change(function () {
             var x = document.getElementById("filter").selectedIndex;
@@ -56,7 +56,7 @@ $("document").ready(function () {
             }
         });
 
-        $("#keyword").autocomplete({
+        /*$("#keyword").autocomplete({
             minLength: 3,
             source: function (req, add) {
                 var text = $("select[name='filter'] option:selected").text();
@@ -81,6 +81,6 @@ $("document").ready(function () {
                 //alert(kdeval);
 
             }
-        });
+        });*/
 
     });

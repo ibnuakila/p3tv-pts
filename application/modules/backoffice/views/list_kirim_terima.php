@@ -49,24 +49,24 @@
                 </thead>
                 <tbody>
                     <?php
-                        if($result->num_rows()>0){
+                        if($terima_barang->num_rows()>0){
                             $no = 1;
-                            
-                            foreach ($result->result() as $row) {
-                                $params = ['id_item' => $row->id_item, 'periode' => $periode];
+                            //print_r($result);
+                            foreach ($terima_barang->result() as $row_item) {
+                                $params = ['id_item' => $row_item->id_item, 'periode' => $registrasi->getPeriode()];
                                 $item_barang = new ItemBarang($params);
                             
                     ?>
                     <tr>
                         <td><?= $no?></td>
                         <td><?= $item_barang->getBarang()?></td>
-                        <td><?= $row->no_kontrak?></td>
-                        <td><?= $row->volume?></td>
-                        <td><?= $row->volume_terkirim?></td>
-                        <td><?= $row->receive_date?></td>
+                        <td><?= $row_item->no_kontrak?></td>
+                        <td><?= $row_item->volume?></td>
+                        <td><?= $row_item->volume_terkirim?></td>
+                        <td><?= $row_item->receive_date?></td>
                         <td>
-                            <?php if($row->receive_date != ''){ ?>
-                            <a href="<?= base_url() . 'backoffice/kelolapaket/detailterima/' . $row->id_terima ?>" title="Detail">
+                            <?php if($row_item->receive_date != ''){ ?>
+                            <a href="<?= base_url() . 'backoffice/kelolapaket/detailterima/' . $row_item->id_terima ?>" title="Detail">
                                 <i class="fa fa-list"></i>
                             <a/>
                             <?php } ?>

@@ -1,5 +1,4 @@
-
-<script type="text/javascript" >
+<script type="text/javascript">
 
 </script>
 
@@ -16,10 +15,10 @@
             <div class="table-responsive">
                 <table class="table table-condensed table-striped table-bordered">
                     <thead class="">
-                        <tr class="" >
+                        <tr class="">
                             <th>#</th>
                             <th class="text-center">Id Registrasi</th>
-                            <th class="text-center">Yayasan</th> 
+                            <th class="text-center">Yayasan</th>
                             <th class="text-center">Perguruan Tinggi</th>
                             <th class="text-center">Jns Evaluasi</th>
                             <th class="text-center">Evaluator</th>
@@ -30,27 +29,27 @@
                             <th class="text-center">Action</th>
                         </tr>
                         <tr class="bg-light">
-                    <form method="post" action="<?= $base_url ?>">
-                        <th>#</th>
-                        <th><input type="text" id="id_registrasi" name="id_registrasi" class="form-control form-control-sm"></th>
-                        <th><input type="text" id="yayasan" name="yayasan" class="form-control form-control-sm"></th>
-                        <th><input type="text" id="pti" name="pti" class="form-control form-control-sm"></th>                        
-                        <th></th>
-                        <th><input type="text" id="evaluator" name="evaluator" class="form-control form-control-sm"></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th><?= form_dropdown('status_proses', $status_proses, '', 'class="form-control form-control-sm"') ?></th>
+                            <form method="post" action="<?= $base_url ?>">
+                                <th>#</th>
+                                <th><input type="text" id="id_registrasi" name="id_registrasi" class="form-control form-control-sm"></th>
+                                <th><input type="text" id="yayasan" name="yayasan" class="form-control form-control-sm"></th>
+                                <th><input type="text" id="pti" name="pti" class="form-control form-control-sm"></th>
+                                <th></th>
+                                <th><input type="text" id="evaluator" name="evaluator" class="form-control form-control-sm"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th><?= form_dropdown('status_proses', $status_proses, '', 'class="form-control form-control-sm"') ?></th>
 
-                        <th>
-                            <button type="submit" name="find" class="btn btn-primary btn-sm" value="find">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </th>
-                    </form>
-                    </tr>
+                                <th>
+                                    <button type="submit" name="find" class="btn btn-primary btn-sm" value="find">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </th>
+                            </form>
+                        </tr>
                     </thead>
-                    <tbody>          
+                    <tbody>
 
                         <?php
                         if (isset($proses) && $proses != null) {
@@ -91,13 +90,13 @@
                                     $nmpti = $pt->getNmPti();
                                 }
                                 $evaluator = new Evaluator($pro->getIdEvaluator());
-                                ?>
+                        ?>
                                 <tr class="<?php
-                                if ($status->getIdStatusProses() == '4') {
-                                    echo 'table-warning';
-                                }
-                                $jenis_evaluasi = new JenisEvaluasi($obj->id_jns_evaluasi);
-                                ?>">
+                                            if ($status->getIdStatusProses() == '4') {
+                                                echo 'table-warning';
+                                            }
+                                            $jenis_evaluasi = new JenisEvaluasi($obj->id_jns_evaluasi);
+                                            ?>">
 
                                     <td><?= $i ?></td>
                                     <td><?= $reg->getIdRegistrasi(); ?></td>
@@ -116,19 +115,19 @@
                                         <?php } else { ?>
                                             <span class="badge badge-light-info"><?= $status->getNamaStatus(); ?></span>
                                         <?php } ?>
-                                    </td>          
+                                    </td>
                                     <td>
                                         <?php
-                                        if ($this->sessionutility->isAdministrator()) {//menu khusus admin yg ditugaskan evaluasi
-                                            ?>
-                                                                  <!--<a href="<?= base_url() . 'backoffice/kelolaevaluasi/view/' . $reg->getIdRegistrasi() ?>" title="View">
+                                        if ($this->sessionutility->isAdministrator()) { //menu khusus admin yg ditugaskan evaluasi
+                                        ?>
+                                            <!--<a href="<?= base_url() . 'backoffice/kelolaevaluasi/view/' . $reg->getIdRegistrasi() ?>" title="View">
                                                                     <i class="fa fa-file"></i> </a>-->
 
                                             <?php
                                             //if($jml_segment)
                                             if ($this->uri->segment(3) == 'indexevaluator') {
-                                                if ($obj->type_evaluator == '1') {//admin sebagai reviewer
-                                                    ?>
+                                                if ($obj->type_evaluator == '1') { //admin sebagai reviewer
+                                            ?>
 
                                                     <!--<a href="<?= base_url() . 'backoffice/kelolaproses/getberitaacarafinal/' . $reg->getIdRegistrasi() ?>" 
                                                        title="Berita Acara Final" target="_new">
@@ -139,9 +138,11 @@
                                                         <i class="fa fa-list-alt"></i> </a>
                                                     <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Unggah File">
                                                         <i class="fa fa-upload"></i> </a>
-                                                    <?php
-                                                } else {//admin sebagai tim teknis
-                                                    ?>
+                                                <?php
+                                                } else { //admin sebagai tim teknis
+                                                
+                                                    if ($obj->id_jns_evaluasi == '2') {?>   
+
                                                     <div class="btn-group card-option">
                                                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <i class="feather icon-more-horizontal"></i>
@@ -173,42 +174,54 @@
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <?php
+
+                                                    <?php } else { ?>
+
+                                                    <a href="<?= base_url() . 'backoffice/kelolaregistrasi/detail/' . $reg->getIdRegistrasi() ?>" title="Detail Usulan">
+                                                        <i class="fa fa-eye"></i> </a>
+                                                    <a href="<?= base_url() . 'backoffice/kelolapaket/getform/' . $reg->getIdRegistrasi() ?>" title="Lampiran BAP">
+                                                        <i class="fa fa-list-alt"></i> </a>
+                                                    <a href="<?= base_url() . 'backoffice/kelolaproses/getbapmonev/' . $reg->getIdRegistrasi() ?>" title="Template BAP">
+                                                        <i class="fa fa-list"></i> </a>
+                                                    <a href="<?= base_url() . 'backoffice/kelolaevaluasi/addbapmonev/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Upload BAP">
+                                                        <i class="fa fa-upload"></i> </a>
+
+                                                <?php }
                                                 }
                                             } else {
                                                 ?>
                                                 <a href="<?= base_url() . 'backoffice/kelolapenugasan/edit/' . $pro->getIdProses() ?>" title="Edit">
                                                     <i class="fa fa-edit"></i> </a>
-                                                <?php
+                                            <?php
                                             }
-                                        } else {//end user -------------------------------------------
+                                        } else { //end user -------------------------------------------
                                             if ($obj->id_jns_evaluasi == '1') {
-                                                ?>
-                                                    <div class="btn-group card-option">
-                                                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <i class="feather icon-more-horizontal"></i>
-                                                        </button>
-                                                        <ul class="list-unstyled card-option dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(12px, 28px, 0px);">
-                                                            <li class="dropdown-item full-card">
-                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-list-alt"></i> Dokumen</a>
-                                                            </li>
+                                            ?>
+                                                <div class="btn-group card-option">
+                                                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="feather icon-more-horizontal"></i>
+                                                    </button>
+                                                    <ul class="list-unstyled card-option dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(12px, 28px, 0px);">
+                                                        <li class="dropdown-item full-card">
+                                                            <a href="<?= base_url() . 'backoffice/kelolaproses/detaildocument/' . $reg->getIdRegistrasi() ?>"><i class="fa fa-list-alt"></i> Dokumen</a>
+                                                        </li>
 
-                                                            <li class="dropdown-item reload-card">
-                                                                <a href="<?= base_url() . 'backoffice/kelolaproses/downloadinstrument/' . $obj->id_proses ?>"><i class="fa fa-file-word"></i> Download Instrument Penilaian</a>
-                                                            </li>
+                                                        <li class="dropdown-item reload-card">
+                                                            <a href="<?= base_url() . 'backoffice/kelolaproses/downloadinstrument/' . $obj->id_proses ?>"><i class="fa fa-file-word"></i> Download Instrument Penilaian</a>
+                                                        </li>
 
-                                                            <li class="dropdown-item full-card">
-                                                                <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>"><i class="fa fa-upload"></i> Unggah</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                
+                                                        <li class="dropdown-item full-card">
+                                                            <a href="<?= base_url() . 'backoffice/kelolaevaluasi/add/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>"><i class="fa fa-upload"></i> Unggah</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
 
                                                 <?php
                                             } elseif ($obj->id_jns_evaluasi == '2') {
-                                                if ($obj->type_evaluator == '1') {//reviewer ---------
-                                                    ?>
-                                                    
+                                                if ($obj->type_evaluator == '1') { //reviewer ---------
+                                                ?>
+
                                                     <div class="btn-group card-option">
                                                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <i class="feather icon-more-horizontal"></i>
@@ -227,9 +240,9 @@
                                                             </li>-->
                                                         </ul>
                                                     </div>
-                                                    <?php
-                                                } else {//tim teknis ------------------------------
-                                                    ?>
+                                                <?php
+                                                } else { //tim teknis ------------------------------
+                                                ?>
 
                                                     <div class="btn-group card-option">
                                                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -270,7 +283,7 @@
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <?php
+                                                <?php
                                                 }
                                             } elseif ($obj->id_jns_evaluasi == '3') {
                                                 ?>
@@ -282,17 +295,17 @@
                                                     <i class="fa fa-list"></i> </a>
                                                 <a href="<?= base_url() . 'backoffice/kelolaevaluasi/addbapmonev/' . $reg->getIdRegistrasi() . '/' . $obj->id_proses; ?>" title="Upload BAP">
                                                     <i class="fa fa-upload"></i> </a>
-                                                <?php
+                                        <?php
                                             }
                                         }
                                         ?>
                                     </td>
                                 </tr>
-                                <?php
+                        <?php
                                 $i++;
                             }
                         }
-                        ?>        
+                        ?>
 
                     </tbody>
                 </table>
@@ -301,7 +314,7 @@
             <div>
                 <?php
                 echo $this->pagination->create_links();
-//echo $articles->count();
+                //echo $articles->count();
                 ?>
             </div>
 
