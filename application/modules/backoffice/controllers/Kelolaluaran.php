@@ -162,4 +162,30 @@ class KelolaLuaran extends CI_Controller implements IControll{
             }
         }
     }
+
+    public function downloadKuitansi($id)
+    {
+        $this->load->helper('download');
+        $luaran = new LuaranProgram($id);
+        $file_path = $luaran->kwitansi;
+        if (is_file($file_path)) {
+            $ext = pathinfo($file_path, PATHINFO_EXTENSION);
+            $data = file_get_contents($file_path);
+            $name = $luaran->id_registrasi."_kwitansi" . $ext;
+            //echo 'name: '.$name;
+            force_download($name, $data);
+        } else {
+            $temp_path = '/home/pppts/frontends/frontend/web/' . $file_path;
+            //echo $temp_path;
+            if (is_file($temp_path)) {
+                $ext = pathinfo($temp_path, PATHINFO_EXTENSION);
+                $data = file_get_contents($temp_path);
+                $name = $luaran->id_registrasi."_kwitansi" . $ext;
+                //echo 'name: '.$name;
+                force_download($name, $data);
+            } else {
+                echo 'File not found!';
+            }
+        }
+    }
 }

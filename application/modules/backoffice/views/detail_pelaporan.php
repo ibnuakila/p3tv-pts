@@ -61,7 +61,9 @@ $result = $luaran->getResult($param_luaran);
                                 }
                             ?>
                         </td>
-                        <td></td>
+                        <td>
+                        <a href="<?=base_url()?>backoffice/kelolaluaran/downloadkuitansi/<?=$row->id?>">Kuitansi</a>
+                        </td>
                     </tr>
             <?php $i++;
                 }

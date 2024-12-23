@@ -542,13 +542,7 @@
                                 <?php } ?>
                             </tbody>
                         </table>
-                    <?php
-                    
-                    include('detail_pelaporan.php');
-                    ?>
-                </div>
-
-                <div class="tab-pane fade" id="terima" role="tabpanel" aria-labelledby="terima-tab">
+                        <h3>Laporan Akhir</h3>
                 <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -567,12 +561,8 @@
                                 <tr>
                                     <td><?= $res->id_registrasi?></td>
                                     <td>
-                                        <?php
-                                            if($res->tipe_file == 'pdf'){
-                                                echo 'Surat Pernyataan';
-                                            }else{
-                                                echo 'Laporan Akhir';
-                                            }
+                                        <?php                                            
+                                            echo 'Laporan Akhir';                                            
                                         ?>
                                     </td>
                                     <td><?= $res->upload_date?></td>
@@ -595,6 +585,14 @@
                                 } ?>
                             </tbody>
                         </table>
+                    <?php
+                    
+                    include('detail_pelaporan.php');
+                    ?>
+                </div>
+
+                <div class="tab-pane fade" id="terima" role="tabpanel" aria-labelledby="terima-tab">
+                
                     <?php include('list_kirim_terima.php'); ?>
                 </div>
                 
